@@ -9,7 +9,8 @@ Class {
 		'moveCount',
 		'movesLabel',
 		'moveCountLabel',
-		'moves'
+		'moves',
+		'dsp'
 	],
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
@@ -93,10 +94,22 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 ]
 
 { #category : 'public' }
+MyChessGame >> initializeSound [
+
+	| clap |
+	clap := Marimba new strikeSharpness: 4.
+	dsp := clap asDsp.
+	dsp init.
+
+	dsp start
+]
+
+{ #category : 'public' }
 MyChessGame >> move: piece to: square [
 
 	piece moveTo: square.
-	self recordMovementOf: piece to: square
+	self recordMovementOf: piece to: square.
+	self toc
 ]
 
 { #category : 'accessing' }
@@ -142,4 +155,10 @@ MyChessGame >> recordMovementOf: aPiece to: aSquare [
 	].
 	
 	movesLabel text: movesText
+]
+
+{ #category : 'initialization' }
+MyChessGame >> toc [
+
+	dsp trig: 'MarimbaGate'
 ]

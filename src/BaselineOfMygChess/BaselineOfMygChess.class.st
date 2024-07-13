@@ -14,7 +14,9 @@ BaselineOfMygChess >> baseline: spec [
 		with: [ spec repository: 'github://Ducasse/Myg:v1.0.2/src' ].
 
 	spec
-		package: 'MygChess'
-		with: [ spec requires: #( 'MygChess-Importers' ) ];
-		package: 'MygChess-Importers'
+		package: 'Myg-Chess-Core'
+		with: [ spec requires: #( 'Myg-Chess-Importers' ) ];
+		package: 'Myg-Chess-Importers';
+		package: 'Myg-Chess-Tests'
+		with: [ spec requires: #( 'Myg-Chess-Core' ) ]
 ]

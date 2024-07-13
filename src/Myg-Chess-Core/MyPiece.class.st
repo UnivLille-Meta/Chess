@@ -168,9 +168,7 @@ MyPiece >> moveTo: aSquare [
 
 	square emptyContents.
 	square := aSquare.
-	aSquare contents: self.
-
-	self board toc
+	aSquare contents: self
 ]
 
 { #category : 'rendering' }
