@@ -1,8 +1,8 @@
 Class {
 	#name : 'MyPawn',
 	#superclass : 'MyPiece',
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'accessing' }
@@ -23,6 +23,6 @@ MyPawn >> targetSquaresLegal: aBoolean [
 	^ (self isWhite
 		   ifTrue: [ { square up } ]
 		   ifFalse: [ { square down } ]) select: [ :s |
-		  s isInBoard and: [
+		  s notNil and: [
 			  s hasPiece not or: [ s contents color ~= color ] ] ]
 ]

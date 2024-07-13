@@ -1,8 +1,8 @@
 Class {
 	#name : 'MyQueen',
 	#superclass : 'MyPiece',
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'rendering' }

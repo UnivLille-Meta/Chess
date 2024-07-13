@@ -5,8 +5,8 @@ Class {
 		'color',
 		'game'
 	],
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'constants' }
@@ -54,7 +54,7 @@ MyPlayer >> king [
 { #category : 'accessing' }
 MyPlayer >> pieces [
 
-	^ game pieces select: [ :p | p color = self color ]
+	^ game pieces select: [ :p | p notNil and: [ p color = self color ] ]
 ]
 
 { #category : 'playing' }

@@ -11,8 +11,8 @@ Class {
 		'moveCountLabel',
 		'moves'
 	],
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'instance creation' }
@@ -46,6 +46,7 @@ MyChessGame >> checkForMate [
 MyChessGame >> initialize [
 
 	super initialize.
+	self initializeFonts.
 
 	moves := OrderedCollection new.
 	whitePlayer := MyPlayer new white game: self.

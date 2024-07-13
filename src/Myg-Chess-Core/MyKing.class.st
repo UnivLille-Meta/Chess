@@ -1,8 +1,8 @@
 Class {
 	#name : 'MyKing',
 	#superclass : 'MyPiece',
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'as yet unclassified' }
@@ -16,14 +16,14 @@ MyKing >> basicTargetSquares [
 
 	"The king can move one square on each direction including diagonals"
 	^ {
-		square right.
-		square up right.
-		square up.
-		square up left.
-		square left.
-		square left down.
-		square down.
-		square down right
+		square ifNotNil: #right.
+		square up ifNotNil: #right.
+		square ifNotNil: #up.
+		square up ifNotNil: #left.
+		square ifNotNil: #left.
+		square left ifNotNil: #down.
+		square ifNotNil: #down.
+		square down ifNotNil: #right
 	}
 ]
 
@@ -65,7 +65,8 @@ MyKing >> isKing [
 { #category : 'accessing' }
 MyKing >> opponentPieces [
 
-	^ self board pieces select: [ :e | e color = color negated ]
+	^ self board pieces select: [ :e |
+		  e notNil and: [ e color = color negated ] ]
 ]
 
 { #category : 'rendering' }
@@ -83,7 +84,7 @@ MyKing >> targetSquaresLegal: aBoolean [
 		                     e attackingSquares ].
 
 	^ self basicTargetSquares select: [ :s |
-		  s isInBoard and: [
+		  s notNil and: [
 			  (threatenedSquares includes: s) not and: [
 				  s hasPiece not or: [ 
 					"The square has an opponent piece"

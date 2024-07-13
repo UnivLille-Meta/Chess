@@ -11,8 +11,8 @@ Class {
 		'white',
 		'black'
 	],
-	#category : 'Myg-ChessImporters',
-	#package : 'Myg-ChessImporters'
+	#category : 'Myg-Chess-Importers',
+	#package : 'Myg-Chess-Importers'
 }
 
 { #category : 'accessing' }

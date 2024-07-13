@@ -1,8 +1,8 @@
 Class {
 	#name : 'MyRook',
 	#superclass : 'MyPiece',
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'accessing' }

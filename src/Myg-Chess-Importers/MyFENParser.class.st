@@ -5,8 +5,8 @@ Class {
 		'stream',
 		'pieces'
 	],
-	#category : 'Myg-ChessImporters',
-	#package : 'Myg-ChessImporters'
+	#category : 'Myg-Chess-Importers',
+	#package : 'Myg-Chess-Importers'
 }
 
 { #category : 'parsing' }

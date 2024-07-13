@@ -5,8 +5,8 @@ Class {
 		'tagName',
 		'value'
 	],
-	#category : 'Myg-ChessImporters',
-	#package : 'Myg-ChessImporters'
+	#category : 'Myg-Chess-Importers',
+	#package : 'Myg-Chess-Importers'
 }
 
 { #category : 'printing' }

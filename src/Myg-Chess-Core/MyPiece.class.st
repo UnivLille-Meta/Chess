@@ -5,8 +5,8 @@ Class {
 		'color',
 		'square'
 	],
-	#category : 'Myg-Chess',
-	#package : 'Myg-Chess'
+	#category : 'Myg-Chess-Core',
+	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'constants' }
@@ -47,7 +47,7 @@ MyPiece >> collectSquares: aBlock [
 MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
 
 	^ self collectSquares: aBlock while: [ :aSquare |
-		  aSquare isInBoard and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+		  aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
 ]
 
 { #category : 'rendering' }
@@ -62,7 +62,7 @@ MyPiece >> collectSquares: collectBlock while: untilBlock [
 		whileTrue: [ targets add: next ].
 
 	"If we can it the next piece, then add it too"
-	(next isInBoard and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
+	(next notNil and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
 
 	^ targets
 ]
@@ -101,7 +101,7 @@ MyPiece >> downLeftDiagonal [
 MyPiece >> downLeftDiagonalLegal: aBoolean [
 
 	^ self
-		  collectSquares: [ :aSquare | aSquare down left ]
+		  collectSquares: [ :aSquare | aSquare down ifNotNil: #left ]
 		  legal: aBoolean
 ]
 
@@ -115,7 +115,7 @@ MyPiece >> downRightDiagonal [
 MyPiece >> downRightDiagonalLegal: aBoolean [
 
 	^ self
-		  collectSquares: [ :aSquare | aSquare down right ]
+		  collectSquares: [ :aSquare | aSquare down ifNotNil: #right ]
 		  legal: aBoolean
 ]
 
@@ -229,7 +229,7 @@ MyPiece >> upLeftDiagonal [
 { #category : 'rendering' }
 MyPiece >> upLeftDiagonalLegal: aBoolean [
 
-	^ self collectSquares: [ :aSquare | aSquare up left ] legal: aBoolean
+	^ self collectSquares: [ :aSquare | aSquare up ifNotNil: #left ] legal: aBoolean
 ]
 
 { #category : 'rendering' }
@@ -242,6 +242,6 @@ MyPiece >> upRightDiagonal [
 MyPiece >> upRightDiagonalLegal: aBoolean [
 
 	^ self
-		  collectSquares: [ :aSquare | aSquare up right ]
+		  collectSquares: [ :aSquare | aSquare up ifNotNil: #right ]
 		  legal: aBoolean
 ]
