@@ -11,6 +11,34 @@ The goal of this repository is not to be a complete full blown game, but a good 
  - profiling
  - debugging
 
+## Getting started
+
+### Getting the code
+
+This code has been tested in Pharo 12. You can get it by installing the following baseline code:
+
+```smalltalk
+Metacello new
+	repository: 'github://Univ-Lille-Meta/Chess';
+	baseline: 'MygChess';
+	onConflictUseLoaded;
+	load.
+```
+
+### Using it
+
+You can open the chess game using the following expression:
+
+```smalltalk
+board := MyChessGame freshGame.
+board size: 800@600.
+space := BlSpace new.
+space root addChild: board.
+space pulse.
+space resizable: true.
+space show.
+```
+
 ## Relevant Design Points
 
 This repository contains:
