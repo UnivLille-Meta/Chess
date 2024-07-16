@@ -202,6 +202,52 @@ Questions and ideas that can help you in the process:
 - How can you find documentation and help to understand the graphical part that will implement, for example, a pop-up?
 - The bot will not need a UI, how would you make it work without breaking the other existing code?
 
+### Implement the 9 queens problem
+
+**Goal:** Practice refactoring and algorithms
+
+Chess players like puzzles. One well-known puzzle is the 9 queens puzzle (https://www.chessvariants.com/problems.dir/9queens.html).
+The player should put 9 queens on the board without having them threat each other.
+You have to implement the game reusing the existing code (the queens implementation, the board).
+As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
+But you can do it.
+
+Questions and ideas that can help you in the process:
+- What parts of the original code are useful for you and which ones are not? Can you make the game extensible to take this into account?
+- The 9 queens game has a different winning condition than a normal game chess, how can you plug different winning conditions?
+
+### Game Replay
+
+**Goal:** Practice refactoring and debugging
+
+A common practice between chess players is to study old games.
+Fortunately, many old games exist digitalized in PGN format, and the engine has initial support for it!
+You have to implement a replay feature, where a game is imported and the player move the game forward/backwards given the list of moves.
+As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
+But you can do it.
+
+Questions and ideas that can help you in the process:
+- How should you extend the UI to implement this feature?
+- What would happen if the PGN support is not complete/perfect? How can you manage to improve it?
+
+### Positional Heatmap
+
+**Goal:** Practice refactoring, code understanding and a bit of profiling
+
+Chess pieces have a certain influence in the board.
+For example, a queen controls all squares in its diagonals, ranks and columns.
+However, when many pieces are in the game, understanding how such control gives advantage to a player is difficult.
+Players need a lot of mental calculation.
+
+Your task is to build a heatmap as in https://tlee753.com/chess-visualizer/, where the background color of the square is chosen depending on the influence of each player.
+Strong white control is green. Strong black control is red.
+As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
+But you can do it.
+
+Questions and ideas that can help you in the process:
+- How can this support be plugged in as an optional feature in the game?
+- Computing the influence could be an expensive analysis. Can you profile your code to see if there are potential improvements you can do?
+
 ## Troubleshotting
 
 - Exceptions in the Myg UI thread stop the event cycle. This makes the game "freeze": it receives events but the thread that treats them is not running. To restart the UI thread, execute the following:
