@@ -19,7 +19,7 @@ This code has been tested in Pharo 12. You can get it by installing the followin
 
 ```smalltalk
 Metacello new
-	repository: 'github://Univ-Lille-Meta/Chess';
+	repository: 'github://UnivLille-Meta/Chess';
 	baseline: 'MygChess';
 	onConflictUseLoaded;
 	load.
