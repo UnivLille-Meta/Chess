@@ -124,22 +124,10 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 ]
 
 { #category : 'public' }
-MyChessGame >> initializeSound [
-
-	| clap |
-	clap := Marimba new strikeSharpness: 4.
-	dsp := clap asDsp.
-	dsp init.
-
-	dsp start
-]
-
-{ #category : 'public' }
 MyChessGame >> move: piece to: square [
 
 	piece moveTo: square.
-	self recordMovementOf: piece to: square.
-	self toc
+	self recordMovementOf: piece to: square
 ]
 
 { #category : 'accessing' }
@@ -185,10 +173,4 @@ MyChessGame >> recordMovementOf: aPiece to: aSquare [
 	].
 	
 	movesLabel text: movesText
-]
-
-{ #category : 'initialization' }
-MyChessGame >> toc [
-
-	dsp trig: 'MarimbaGate'
 ]
