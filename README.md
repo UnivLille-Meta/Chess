@@ -248,6 +248,21 @@ Questions and ideas that can help you in the process:
 - How can this support be plugged in as an optional feature in the game?
 - Computing the influence could be an expensive analysis. Can you profile your code to see if there are potential improvements you can do?
 
+### Chess Variants
+
+https://www.chess.com/terms/chess-variants
+
+ - Horde
+ - Fog of War
+ - Atomic
+ - 3-check
+ - King of the hill
+
+### Chess puzzles database integration
+
+http://www.bstephen.me.uk/meson/meson.pl?opt=top
+https://www.yacpdb.org/#static/home
+
 ## Troubleshotting
 
 - Exceptions in the Myg UI thread stop the event cycle. This makes the game "freeze": it receives events but the thread that treats them is not running. To restart the UI thread, execute the following:
