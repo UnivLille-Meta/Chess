@@ -10,8 +10,12 @@ BaselineOfMygChess >> baseline: spec [
 
 	<baseline>
 	spec
-		baseline: 'Myg'
-		with: [ spec repository: 'github://Ducasse/Myg:v1.0.2/src' ].
+		baseline: 'Bloc'
+		with: [ spec repository: 'github://pharo-graphics/Bloc:v2.0.0/src' ].
+
+	spec
+		baseline: 'Toplo'
+		with: [ spec repository: 'github://plantec/Toplo:v0.1.0/src' ].
 
 	spec
 		package: 'Myg-Chess-Core'
