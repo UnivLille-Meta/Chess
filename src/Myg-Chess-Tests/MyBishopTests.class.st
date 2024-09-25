@@ -8,7 +8,7 @@ Class {
 { #category : 'tests' }
 MyBishopTests >> testId [
 
-	self assert: MyBishop new id equals: 'B'
+	self assert: MyBishop new id equals: 'B'.
 ]
 
 { #category : 'tests' }
