@@ -21,6 +21,27 @@ MypawnTest >> testCaptureDiagonly [
 	
 ]
 
+{ #category : 'tests' }
+MypawnTest >> testEnPassantMove [
+	| board whitePawn blackPawn enPassantSquare legalMoves squares game|
+	
+	"Créer un échiquier vide"
+	board := MyChessBoard empty.
+
+	"Placer un pion blanc à e5"
+	board at: 'e5' put: (whitePawn := MyPawn white).
+
+	"Placer un pion noir à d7 et le déplacer de deux cases à d5"
+	board at: 'd7' put: (blackPawn := MyPawn initialize black).
+	blackPawn moveTo: (board at: 'd5'). 
+	squares := whitePawn targetSquares.
+	self
+		assertCollection: squares
+		includesAll:
+			(#( d6) collect: [ :name |
+				 board at: name ])
+]
+
 { #category : ' tests' }
 MypawnTest >> testMoves [
 	| pawn board squares |

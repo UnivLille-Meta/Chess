@@ -1,9 +1,24 @@
 Class {
 	#name : 'MyPawn',
 	#superclass : 'MyPiece',
+	#instVars : [
+		'canBeCapturedEnPassant'
+	],
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
+
+{ #category : 'accessing' }
+MyPawn >> canBeCapturedEnPassant [ [
+    ^ canBeCapturedEnPassant
+]
+]
+
+{ #category : 'accessing' }
+MyPawn >> canBeCapturedEnPassant: aBoolean [ [
+    canBeCapturedEnPassant := aBoolean
+]
+]
 
 { #category : 'testing' }
 MyPawn >> canCaptureDiagonally: aSquare [
@@ -22,9 +37,9 @@ MyPawn >> captureMoves [
 	| leftDiagonal rightDiagonal |
 	leftDiagonal := self isWhite ifTrue: [ square up left ] ifFalse: [ square down left ].
 	rightDiagonal := self isWhite ifTrue: [ square up right ] ifFalse: [ square down right ].
-	
+
 	^ { leftDiagonal. rightDiagonal }
-		select: [ :s | s notNil and: [ s hasPiece and: [ s contents color ~= self color ] ] ].
+		select: [ :s | s notNil and: [ s hasPiece and: [ s contents color ~= self color ] ] ] .
 
 ]
 
@@ -32,6 +47,13 @@ MyPawn >> captureMoves [
 MyPawn >> id [
 
 	^ 'P'
+]
+
+{ #category : 'initialization' }
+MyPawn >> initialize [
+    super initialize.
+    canBeCapturedEnPassant := false.
+
 ]
 
 { #category : 'testing' }
@@ -60,14 +82,44 @@ MyPawn >> renderPieceOn: aSquare [
 
 { #category : 'rendering' }
 MyPawn >> targetSquaresLegal: aBoolean [
-	| forwardSquare doubleForwardSquare leftDiagonal rightDiagonal forwardMoves|
+	| forwardSquare doubleForwardSquare leftDiagonal rightDiagonal forwardMoves enPassantMoves leftSquare rightSquare|
 	"Calculer les cases directement devant, deux cases devant (pour le premier mouvement) et en diagonale"
 	forwardSquare := self isWhite ifTrue: [ square up ] ifFalse: [ square down ].
 	doubleForwardSquare := self isWhite ifTrue: [ forwardSquare up ] ifFalse: [ forwardSquare down ] .
 	forwardMoves := (self isInInitialPosition ifTrue: [ { forwardSquare. doubleForwardSquare } ] ifFalse: [ { forwardSquare } ]).
+	
+	leftDiagonal := self isWhite ifTrue: [ square up left ] ifFalse: [ square down left ].
+	rightDiagonal := self isWhite ifTrue: [ square up right ] ifFalse: [ square down right ].
+	"Définir les cases adjacentes sur le même rang"
+	leftSquare := square left.
+	rightSquare := square right.
+
+enPassantMoves := OrderedCollection new.
+
+"Vérifier le côté gauche pour l'en passant"
+(leftSquare notNil and: [ leftDiagonal notNil ]) ifTrue: [
+    leftSquare hasPiece ifTrue: [
+        | adjacentPawn |
+        adjacentPawn := leftSquare contents.
+        (adjacentPawn notNil and: [
+            (adjacentPawn id = 'P') and: [
+                adjacentPawn color ~= self color and: [
+                    adjacentPawn canBeCapturedEnPassant =true] ] ]) ifTrue: [
+            enPassantMoves add: leftDiagonal ] ] ].
+
+"Vérifier le côté droit pour l'en passant"
+(rightSquare notNil and: [ rightDiagonal notNil ]) ifTrue: [
+    rightSquare hasPiece ifTrue: [
+        | adjacentPawn |
+        adjacentPawn := rightSquare contents.
+        (adjacentPawn notNil and: [
+            (adjacentPawn id = 'P') and: [
+                adjacentPawn color ~= self color and: [
+                    adjacentPawn canBeCapturedEnPassant =true] ] ]) ifTrue: [
+            enPassantMoves add: rightDiagonal ] ] ].
 	^ (forwardMoves
 		select: [ :s | s notNil and: [ self canMoveForward: s ] ])
-		, (self captureMoves).
+		, (self captureMoves) ,enPassantMoves .
 
 
 
