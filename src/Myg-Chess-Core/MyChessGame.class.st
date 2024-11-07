@@ -149,15 +149,27 @@ MyChessGame >> play [
 ]
 
 { #category : 'moves' }
-MyChessGame >> recordMovementOf: aPiece to: aSquare [
+MyChessGame >> recordMovementOf: aPiece to: aSquare [ [
 	"moves add: (MyMove piece: aPiece square: aSquare name)."
 
-	| prefix movesText |
+	| prefix movesText moveDistance startSquare | 
+	startSquare := aPiece square.
+    "aPiece moveTo: aSquare" "Assurez-vous que le déplacement se fait après avoir stocké startSquare"
+
 	prefix := currentPlayer isWhite
-		          ifTrue: [ moveCount asString , '.' ]
+		          ifTrue: [ moveCount asString , '.' ] 
 		          ifFalse: [ '' ].
 	moves add: prefix , ' ' , aPiece id , aSquare name.
-	
+	self  resetEnPassantFlags .
+	"Si la pièce est un pion, vérifier s'il a bougé de deux cases"
+   (aPiece id = 'P') ifTrue: [
+        moveDistance := (startSquare y - aSquare y) abs.
+        (aPiece isInInitialPosition and: [ moveDistance = 2 ])
+            ifTrue: [ aPiece canBeCapturedEnPassant: true ]
+            ifFalse: [ aPiece canBeCapturedEnPassant: false ].
+    ].
+    
+
 	movesText := String streamContents: [ :stream |
 		| currentLine |
 		currentLine := ''.
@@ -173,4 +185,15 @@ MyChessGame >> recordMovementOf: aPiece to: aSquare [
 	].
 	
 	movesLabel text: movesText
+]
+]
+
+{ #category : 'initialization' }
+MyChessGame >> resetEnPassantFlags [
+    "Réinitialise le drapeau canBeCapturedEnPassant pour tous les pions"
+   "Réinitialise le drapeau canBeCapturedEnPassant pour tous les pions sur le plateau"
+    | allPawns |
+    allPawns := board pieces select: [ :piece | piece id = 'P' ].
+    allPawns do: [ :pawn | pawn canBeCapturedEnPassant: false ].
+
 ]
