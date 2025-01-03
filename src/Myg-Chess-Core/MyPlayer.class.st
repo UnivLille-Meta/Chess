@@ -58,7 +58,7 @@ MyPlayer >> pieces [
 ]
 
 { #category : 'playing' }
-MyPlayer >> play [
+MyPlayer >> play [ 
 
 	| pieces |
 	pieces := self king isInCheck
@@ -72,10 +72,13 @@ MyPlayer >> play [
 		pieces remove: piece.
 		legalMoves := piece legalTargetSquares.
 		legalMoves ifNotEmpty: [
-			game move: piece to: legalMoves atRandom.
+			game moveAutomatic: piece to: legalMoves atRandom.
 			^ self ] ].
 
 	self halt: 'NO MOVES AVAILABLE!'
+
+
+
 ]
 
 { #category : 'constants' }
