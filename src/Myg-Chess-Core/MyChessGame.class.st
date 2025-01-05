@@ -23,7 +23,8 @@ Class {
 		'movesLabel',
 		'moveCountLabel',
 		'moves',
-		'dsp'
+		'dsp',
+		'lastMove'
 	],
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
@@ -123,9 +124,21 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 		aLayoutConstraints vertical fitContent ]
 ]
 
+{ #category : 'moves' }
+MyChessGame >> lastMove [
+	^ lastMove 
+]
+
+{ #category : 'moves' }
+MyChessGame >> lastMove: aMove [
+	lastMove := aMove 
+]
+
 { #category : 'public' }
 MyChessGame >> move: piece to: square [
-
+	"Enregistre le dernier mouvement utile pour 'en passant'"
+	self recordLastMove: piece to: square. 
+	
 	piece moveTo: square.
 	self recordMovementOf: piece to: square
 ]
@@ -149,10 +162,21 @@ MyChessGame >> play [
 ]
 
 { #category : 'moves' }
+MyChessGame >> recordLastMove: aPiece to: aSquare [
+	| move |
+	move := MyMove new.
+	move piece: aPiece.
+	move startSquare: aPiece square.
+	move endSquare: aSquare.
+	self lastMove: move
+]
+
+{ #category : 'moves' }
 MyChessGame >> recordMovementOf: aPiece to: aSquare [
 	"moves add: (MyMove piece: aPiece square: aSquare name)."
 
 	| prefix movesText |
+	
 	prefix := currentPlayer isWhite
 		          ifTrue: [ moveCount asString , '.' ]
 		          ifFalse: [ '' ].
@@ -172,5 +196,6 @@ MyChessGame >> recordMovementOf: aPiece to: aSquare [
 		stream nextPutAll: currentLine
 	].
 	
-	movesLabel text: movesText
+	movesLabel text: movesText.
+	
 ]
