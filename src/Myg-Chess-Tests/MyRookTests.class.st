@@ -27,6 +27,25 @@ MyRookTests >> testMoves [
 ]
 
 { #category : 'tests' }
+MyRookTests >> testMovesKingPinned [
+
+	| rook squares board |
+	board := MyChessBoard empty.
+	board at: 'e4' put: (rook := MyRook white).
+	board at: 'e5' put: (rook := MyKing white).
+	
+	"Put on attacking piece just in front of the Rook"
+	board at: 'e1' put: (rook := MyRook black).
+
+	squares := rook targetSquares.
+	self
+		denyCollection: squares
+		includesAny:
+			(#( e5 e6 e7 e8 d4 c4 b4 a4 f4 g4 h4 ) collect: [ :name |
+				 board at: name ])
+]
+
+{ #category : 'tests' }
 MyRookTests >> testMovesWithOponentObstacle [
 
 	| bishop squares board |
