@@ -25,6 +25,11 @@ MyPiece class >> white [
 		  yourself
 ]
 
+{ #category : 'visiting' }
+MyPiece >> acceptVisitor: visitor [
+	^self subclassResponsibility.
+]
+
 { #category : 'as yet unclassified' }
 MyPiece >> attackingSquares [
 
@@ -47,7 +52,7 @@ MyPiece >> collectSquares: aBlock [
 MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
 
 	^ self collectSquares: aBlock while: [ :aSquare |
-		  aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+		  (aSquare isNullChessSquare not) and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
 ]
 
 { #category : 'rendering' }
@@ -128,6 +133,16 @@ MyPiece >> id [
 { #category : 'testing' }
 MyPiece >> isKing [
 	
+	^ false
+]
+
+{ #category : 'testing' }
+MyPiece >> isNullPiece [
+	^ false.
+]
+
+{ #category : 'testing' }
+MyPiece >> isPawn [ 
 	^ false
 ]
 

@@ -27,6 +27,25 @@ MyBishopTests >> testMoves [
 ]
 
 { #category : 'tests' }
+MyBishopTests >> testMovesKingPinned [
+
+	| bishop squares board |
+	board := MyChessBoard empty.
+	board at: 'e4' put: (bishop := MyBishop white).
+	board at: 'e3' put: (bishop := MyKing white).
+
+	"Put attacker just in front of the bishop"
+	board at: 'e6' put: (bishop := MyRook black).
+
+	squares := bishop targetSquares.
+	self
+		denyCollection: squares
+		includesAny: 
+			(#( f5 g6 h7 f3 g2 h1 d5 c6 b7 a8 d3 c2 b1 ) collect: [ :name |
+				 board at: name ])
+]
+
+{ #category : 'tests' }
 MyBishopTests >> testMovesWithOponentObstacle [
 
 	| bishop squares board |

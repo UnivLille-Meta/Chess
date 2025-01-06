@@ -7,13 +7,17 @@ Class {
 
 { #category : 'as yet unclassified' }
 MyKing >> attackingSquares [
-
-	^ self basicTargetSquares
+	|forbiddenSquares basicSquares sqVisitor|
+	sqVisitor := MySquareChecker new.
+	forbiddenSquares := sqVisitor analysedPiece: self.
+	forbiddenSquares := forbiddenSquares flatCollect: [ :each | each ].
+	
+	basicSquares := self basicTargetSquares.
+	^ basicSquares reject: [ :sq | forbiddenSquares includes: sq ].
 ]
 
 { #category : 'rendering' }
 MyKing >> basicTargetSquares [
-
 	"The king can move one square on each direction including diagonals"
 	^ {
 		square ifNotNil: #right.
