@@ -1,24 +1,24 @@
 Class {
-	#name : 'MyBishop',
+	#name : 'Bishop',
 	#superclass : 'MyPiece',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'accessing' }
-MyBishop >> id [
+Bishop >> id [
 	
 	^ 'B'
 ]
 
 { #category : 'rendering' }
-MyBishop >> renderPieceOn: aSquare [
+Bishop >> renderPieceOn: aSquare [
 
 	^ aSquare renderBishop: self
 ]
 
 { #category : 'rendering' }
-MyBishop >> targetSquaresLegal: aBoolean [
+Bishop >> targetSquaresLegal: aBoolean [
 
 	^ (self upRightDiagonalLegal: aBoolean)
 	  , (self upLeftDiagonalLegal: aBoolean)

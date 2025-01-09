@@ -1,24 +1,24 @@
 Class {
-	#name : 'MyKnight',
+	#name : 'Knight',
 	#superclass : 'MyPiece',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'accessing' }
-MyKnight >> id [
+Knight >> id [
 	
 	^ 'N'
 ]
 
 { #category : 'rendering' }
-MyKnight >> renderPieceOn: aSquare [
+Knight >> renderPieceOn: aSquare [
 
 	^ aSquare renderKnight: self
 ]
 
 { #category : 'rendering' }
-MyKnight >> targetSquaresLegal: aBoolean [
+Knight >> targetSquaresLegal: aBoolean [
 
 	^ {
 		  (square right ifNotNil: [ :p | p right ifNotNil: #up ]).

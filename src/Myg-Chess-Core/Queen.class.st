@@ -1,18 +1,18 @@
 Class {
-	#name : 'MyQueen',
+	#name : 'Queen',
 	#superclass : 'MyPiece',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'rendering' }
-MyQueen >> renderPieceOn: aSquare [
+Queen >> renderPieceOn: aSquare [
 
 	^ aSquare renderQueen: self
 ]
 
 { #category : 'rendering' }
-MyQueen >> targetSquaresLegal: aBoolean [
+Queen >> targetSquaresLegal: aBoolean [
 
 	| likeABishop likeARook |
 	likeABishop := (self upRightDiagonalLegal: aBoolean)

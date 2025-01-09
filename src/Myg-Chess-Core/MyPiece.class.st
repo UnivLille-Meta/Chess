@@ -172,6 +172,18 @@ MyPiece >> moveTo: aSquare [
 ]
 
 { #category : 'rendering' }
+MyPiece >> renderPieceOnBlackSquare [
+
+	^ 'x'.
+]
+
+{ #category : 'rendering' }
+MyPiece >> renderPieceOnWhiteSquare [
+
+	^ 'z'.
+]
+
+{ #category : 'rendering' }
 MyPiece >> rightFile [
 
 	^ self rightFileLegal: false

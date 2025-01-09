@@ -1,29 +1,29 @@
 Class {
-	#name : 'MyRook',
+	#name : 'Rook',
 	#superclass : 'MyPiece',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'accessing' }
-MyRook >> id [
+Rook >> id [
 	^ 'R'
 ]
 
 { #category : 'rendering' }
-MyRook >> renderPieceOn: aSquare [
+Rook >> renderPieceOn: aSquare [
 
 	^ aSquare renderRook: self
 ]
 
 { #category : 'rendering' }
-MyRook >> targetSquares [
+Rook >> targetSquares [
 
 	^ self upFile , self downFile , self leftFile , self rightFile
 ]
 
 { #category : 'rendering' }
-MyRook >> targetSquaresLegal: aBoolean [
+Rook >> targetSquaresLegal: aBoolean [
 
 	^ (self upFileLegal: aBoolean) , (self downFileLegal: aBoolean)
 	  , (self leftFileLegal: aBoolean) , (self rightFileLegal: aBoolean)

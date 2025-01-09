@@ -1,143 +1,92 @@
-# Myg Chess Game
+# Installation and usage instructions
+You can get the code in Pharo 12 by installing the following baseline code:
 
-This is a chess game for Pharo based on Bloc, Toplo and Myg.
-
-## What is this repository really about
-
-The goal of this repository is not to be a complete full blown game, but a good enough implementation to practice software engineering skills:
- - testing
- - reading existing code
- - refactorings
- - profiling
- - debugging
-
-## Getting started
-
-### Getting the code
-
-This code has been tested in Pharo 12. You can get it by installing the following baseline code:
-
-```smalltalk
+```
 Metacello new
-	repository: 'github://UnivLille-Meta/Chess:main';
+	repository: 'github://elisabethbercy/Chess:main';
 	baseline: 'MygChess';
 	onConflictUseLoaded;
 	load.
 ```
 
-### Using it
-
-You can open the chess game using the following expression:
-
-```smalltalk
-board := MyChessGame freshGame.
-board size: 800@600.
-space := BlSpace new.
-space root addChild: board.
-space pulse.
-space resizable: true.
-space show.
+You can open the Chess Game with the following expression:
 ```
+	board := MyChessGame freshGame.
+	board size: 800@600.
+	space := BlSpace new.
+	space root addChild: board.
+	space pulse.
+	space resizable: true.
+	space show.
+```
+---
 
-## Relevant Design Points
+# Our Katas
+We chose the following Katas: Fix pawn moves! Restrcit legal moves! Refactoring of pieces rendering
 
-This repository contains:
- - a chess model: the board/squares, the pieces, their movements, how they threat each other
- - a UI using Bloc and Toplo: a board is rendered as bloc UI elements. Each square is a UI element that contains a selection, an optional piece. Pieces are rendered using a text element and a special chess font (https://github.com/joshwalters/open-chess-font/tree/master).
- - Textual game importers for the PGN and FEN standards (see https://ia902908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt and https://www.chessprogramming.org/Forsyth-Edwards_Notation#Samples)
+# Kata 1: Correction of Pawn Movement
 
-## Katas
+# Objective  
+Practice debugging and testing.
 
-These are some ideas of exercises you may try:
 
-### Fix pawn moves!
 
-**Goal:** Practice debugging and testing
+## Implementation Summary  
+This kata focused on implementing the rules for pawn movements, including:  
+- Moving one square straight ahead.  
+- Moving two squares on the first move.  
+- Capturing diagonally.  
 
-Pawns are one of the most complicated pieces of chess to implement.
-They move forward, one square at a time, except for their first movement.
-However, they can move diagonally to capture other pieces.
-And in addition, there is the (in)famous "En passant" move that complicates everything (see https://en.wikipedia.org/wiki/En_passant, and the FEN documentation for ideas on how to encode this information https://www.chessprogramming.org/Forsyth-Edwards_Notation#En_passant_target_square).
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
+An incremental approach and the **State Design Pattern** were used to structure the movement logic.
 
-Questions and ideas that can help you in the process:
-- Can you write tests showing the bugs?
-- What kind of tools can you use to spot the bug?
-- Can you approach this incrementally? This is, splitting this task in many subtasks. How would you prioritize them?
 
-### Restrict legal moves
 
-**Goal:** Practice code understanding, refactorings and debugging
+## Key Steps  
 
-In chess, when we are not in danger we can move any piece we want in general, as soon as we follow the rules.
-However, when the king gets threatened, we must protect it!
-The only legal moves in that scenario are the ones that save the king (or otherwise we lose).
-What are moves that protect the king? The ones that capture the attacker, block the attack, or move the king out of danger.
-Another way to see it is: A move protects the king if it moves it out of check.
+### 1. Writing Tests  
+- Verifying standard and initial movements.  
+- Testing diagonal captures.  
+- Validating illegal cases.  
 
-The current implementation does not support this restriction.
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
+### 2. Managing States with the State Pattern  
+- **InitialForwardState:** Handles the two-square move on the first turn.  
+- **NormalForwardState:** Manages single-square movements.  
+- **DiagonalCaptureState:** Handles diagonal captures.  
 
-Questions and ideas that can help you in the process:
-- What tools help you finding the right place to put this new code?
-- How do you avoid repeating all the existing code computing legal moves and checks?
+Each state calculates possible moves, simplifying the logic within the `Pawn` class.
 
-### Fuzz the board
 
-**Goal:** Practice fuzzing and automated testing on the board
 
-Are we sure the game works? We would like to add automated testing in the loop.
-You can do it.
+## Tests and Coverage  
+- Unit tests for each movement rule.  
+- Manual checks using a simplified graphical interface.
 
-Questions and ideas that can help you in the process:
-- A board can be configured from a FEN format string. What if you generate FEN strings automatically?
-- Once a board is configured, you can test moves. Can you generate (in)valid moves and validate they were correct?
-- The parsers inside the game are probably a nice target for fuzzing too. Did you consider that they may be buggy?
-- Do not forget to test "ugly and invalid scenarios" too
 
-### Implement more bot gaming strategies
 
-**Goal:** Practice refactorings and algorithms
+## Design Decisions  
 
-Currently the engine allows players to play automatically using a "random move" strategy.
-However, many different automatic strategies can be implemented: https://www.youtube.com/watch?v=DpXy041BIlA.
-How can we plug those into the game?
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
+### 1. Prioritization of Essential Features  
+Basic movement rules were implemented first, before adding advanced rules like *En passant*.  
 
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Can you do the refactoring in little steps that avoid breaking the code?
-- Introducing a new game "AI" may require that we expose new methods in the engine.
+### 2. Reducing Complexity  
+Dividing logic into state subclasses resulted in clearer, more modular code.  
 
-### Remove nil checks
+### 3. Focus on Testability  
+Thorough testing ensured the reliability of all implemented features.
 
-**Goal:** Practice refactorings and patterns
 
-In the game, each square has optionally a piece.
-The absence of a piece is represented as a `nil`.
-As any project done in stress during a short period of time (a couple of evenings when the son is sick), the original developer (Guille P) was not 100% following coding standards and quality recommendations.
-We would like to clean up the game logic and remove `nil` checks using some polymorphism.
-You can do it.
+---
 
-Questions and ideas that can help you in the process:
-- How do we transform nil checks into polymorphism?
-- What kind of API should you design?
-- Can tests help you do it with less pain?
-- Something similar happens when a pieces wants to move outside of the board, can you find it and fix it?
 
-### Refactor piece rendering
 
-**Goal:** Practice refactorings, double dispatch and table dispatch
 
+# Kata 2
+Refactor piece rendering
+Goal: Practice refactorings, double dispatch and table dispatch
 The game renders pieces with methods that look like these:
-
-```smalltalk
 MyChessSquare >> renderKnight: aPiece
 
+```
 	^ aPiece isWhite
 		  ifFalse: [ color isBlack
 				  ifFalse: [ 'M' ]
@@ -147,125 +96,280 @@ MyChessSquare >> renderKnight: aPiece
 				  ifFalse: [ 'N' ]
 				  ifTrue: [ 'n' ] ]
 ```
-As any project done in stress during a short period of time (a couple of evenings when the son is sick), the original developer (Guille P) was not 100% following coding standards and quality recommendations.
-We would like you to clean up this rendering logic and remove as much conditionals as possible, for the sake of it.
-You can do it.
 
+As any project done in stress during a short period of time (a couple of evenings when the son is sick), the original developer (Guille P) was not 100% following coding standards and quality recommendations. We would like you to clean up this rendering logic and remove as much conditionals as possible, for the sake of it. You can do it.
 Questions and ideas that can help you in the process:
 - Can you do an implementation with double dispatch?
 - Can you do an implementation with table dispatch?
-- What are the good and bad parts of them in *this scenario*? Do you understand why?
+- What are the good and bad parts of them in this scenario? Do you understand why?
 
-### Make the chess board graphical editor
 
-**Goal:** Practice large refactorings to decouple game logic from rendering
+# Refactoring Report: Piece Rendering in Pharo
 
-The current UI is really tied to the game engine. Clicking on the squares will try to move the pieces and play the game.
-We would like to do a graphical board editor and reuse the graphics.
-But this editor does not need the game logic behind.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
+## Objective
 
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Refactoring and testing UI code can be challenging: this does not mean it is impossible!
-- Can you do the refactoring in little steps that avoid breaking the code?
+The goal of this kata is to simplify the piece rendering logic by removing unnecessary conditionals. The previous implementation relied heavily on complex checks, making the code harder to read and maintain. We applied **double dispatch**, **inheritance**, and **polymorphism** to achieve cleaner, more maintainable code while preserving functionality.
 
-### Make the game UI themable
 
-**Goal:** Practice large refactorings to decouple game logic from rendering
 
-Instead of using a font, try using assets from https://opengameart.org/art-search-advanced?field_art_tags_tid=chess or https://game-icons.net/.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
+## Key Steps in the Refactoring Process
 
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Refactoring and testing UI code can be challenging: this does not mean it is impossible!
-- Can you do the refactoring in little steps that avoid breaking the code?
+1. **Identifying the Problem**:  
+   The original piece rendering logic contained conditionals that checked both the piece type and the square color, making the code difficult to maintain.
 
-### Add pawn promotion
+2. **Applying Double Dispatch**:  
+   We eliminated conditionals by splitting the rendering logic into specific methods for each combination of piece and square color, using **double dispatch** to delegate the rendering behavior to the appropriate method based on both piece type and square color.
 
-**Goal:** Practice code understanding and debugging
+3. **Creating Specific Methods**:  
+   Each piece class (e.g., `BlackBishop`, `WhiteBishop`) now has methods to render on black and white squares:
+   ```pharo
+   BlackBishop >> renderPieceOnBlackSquare [ ^ 'v' ]
+   BlackBishop >> renderPieceOnWhiteSquare [ ^ 'V' ]
+   ```
 
-When pawns arrive to the back of the board, the pawn is promoted: it is transfomed into a major (queen, rook) or minor piece (knight, bishop), choice of the player.
-When in an interactive UI, this requires asking the user what to do.
-When in an automatic player/bot, this requires some automated decision approach.
+4. **Utilizing Inheritance**:  
+   The `BlackBishop` and `WhiteBishop` classes inherit common behavior, reducing duplication and promoting code reuse, while still allowing for future extension.
 
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
+5. **Using Polymorphism**:  
+   Each class implements its own rendering behavior, making the code **flexible** and **extensible**. New pieces can be added without modifying the existing logic.
 
-Questions and ideas that can help you in the process:
-- What tools help you finding the right place to put this new code?
-- How can you find documentation and help to understand the graphical part that will implement, for example, a pop-up?
-- The bot will not need a UI, how would you make it work without breaking the other existing code?
+6. **Eliminating Conditionals**:  
+   We removed complex conditionals, simplifying the code and improving readability.
 
-### Implement the 9 queens problem
+7. **Ensuring Easy Extensibility**:  
+   This structure allows the other pieces to be added easily by implementing their own rendering methods without touching other parts of the code.
 
-**Goal:** Practice refactoring and algorithms
 
-Chess players like puzzles. One well-known puzzle is the 9 queens puzzle (https://www.chessvariants.com/problems.dir/9queens.html).
-The player should put 9 queens on the board without having them threat each other.
-You have to implement the game reusing the existing code (the queens implementation, the board).
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
 
-Questions and ideas that can help you in the process:
-- What parts of the original code are useful for you and which ones are not? Can you make the game extensible to take this into account?
-- The 9 queens game has a different winning condition than a normal game chess, how can you plug different winning conditions?
+## Rendered Symbols
 
-### Game Replay
+Here’s how each bishop is displayed based on the square color:
 
-**Goal:** Practice refactoring and debugging
+| Bishop Type     | Square Color | Rendered Symbol |  
+|-----------------|--------------|-----------------|  
+| Black Bishop    | Black        | v               |  
+| Black Bishop    | White        | V               |  
+| White Bishop    | Black        | b               |  
+| White Bishop    | White        | B               |  
 
-A common practice between chess players is to study old games.
-Fortunately, many old games exist digitalized in PGN format, and the engine has initial support for it!
-You have to implement a replay feature, where a game is imported and the player move the game forward/backwards given the list of moves.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
 
-Questions and ideas that can help you in the process:
-- How should you extend the UI to implement this feature?
-- What would happen if the PGN support is not complete/perfect? How can you manage to improve it?
 
-### Positional Heatmap
+## Why This is Better
 
-**Goal:** Practice refactoring, code understanding and a bit of profiling
+- **No Conditionals**: The rendering logic is now handled by specific methods for each piece and square color combination, eliminating the need for conditional checks.
+- **Simpler Logic**: The code is cleaner and more maintainable, with each piece class directly handling its rendering.
+- **Easy to Extend**: New pieces can be added without altering existing code.
 
-Chess pieces have a certain influence in the board.
-For example, a queen controls all squares in its diagonals, ranks and columns.
-However, when many pieces are in the game, understanding how such control gives advantage to a player is difficult.
-Players need a lot of mental calculation.
+This refactor uses **double dispatch**, **inheritance**, and **polymorphism** to:
+- **Double Dispatch**: Dispatch behavior based on both piece type and square color.
+- **Inheritance**: Shared behavior is inherited, reducing duplication.
+- **Polymorphism**: Each class can implement its specific rendering logic, allowing for easy extension.
 
-Your task is to build a heatmap as in https://tlee753.com/chess-visualizer/, where the background color of the square is chosen depending on the influence of each player.
-Strong white control is green. Strong black control is red.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
+This refactor improves the code by :
+- ** Simplifying the piece rendering logic.
+- ** Semoving complex conditionals, and making the codebase more maintainable and extensible.
+- ** By leveraging double dispatch, inheritance, and polymorphism, the solution is flexible and scalable, allowing for easy adaptation to future changes.
 
-Questions and ideas that can help you in the process:
-- How can this support be plugged in as an optional feature in the game?
-- Computing the influence could be an expensive analysis. Can you profile your code to see if there are potential improvements you can do?
 
-### Chess Variants
 
-https://www.chess.com/terms/chess-variants
+---
 
- - Horde
- - Fog of War
- - Atomic
- - 3-check
- - King of the hill
 
-### Chess puzzles database integration
 
-http://www.bstephen.me.uk/meson/meson.pl?opt=top
-https://www.yacpdb.org/#static/home
+# Kata 3 Restrict Legal Move
 
-## Troubleshotting
 
-- Exceptions in the Myg UI thread stop the event cycle. This makes the game "freeze": it receives events but the thread that treats them is not running. To restart the UI thread, execute the following:
-```smalltalk
-BlParallelUniverse all do: #startUniverse.
+## Introduction
+
+This kata aims the main focuses is protecting the King while being in check/danger.
+The initial implementation of the King protection logic that we started with contained a very large method that was responsible 
+for handling all aspects that we could though  of checking the King’s safety. 
+
+This led to warnings in Pharo due to the method’s size and complexity.
+As a result, we refactored the code into smaller, more focused methods to comply with Pharo’s philosophy of simplicity and readability.
+
+## The method (codesmell) that we came up with 
+
+
+```pharo
+MyPiece >> legalTargetSquares [
+
+"king is in check , only authorize my pieces to move on fatal squares"
+
+|inCheck pieces king initialTargets killAttackSquares defendingSquares allowedSquares projectedSquares nextDecisiveSquares allSquares|
+
+ initialTargets := self targetSquaresLegal: true.
+
+  
+ pieces := self square board pieces select: [:s | s isNotNil ].
+
+"first condition"
+ king := (self isWhite ifFalse: [ pieces select:[:p | p isKing and: p color = Color black ]] 
+							 ifTrue: [ pieces select:[:p | p isKing and: p color = Color white ] ]) at:1 .
+
+ 
+inCheck  := king isInCheck.
+
+Transcript show: (king attackingSquares) .
+
+"Second condition"
+killAttackSquares := self opponentPieces select: [ :opponent | 
+    opponent attackingSquares includes: king square
+] thenCollect: [ :opponent | opponent square ].
+
+"Transcript show: killAttackSquares ."
+
+allowedSquares := initialTargets select: [ :s | (king fatalSquares includes: s) or: [killAttackSquares includes: s]. ].
+
+"Transcript show: allowedSquares ."
+
+
+ "third condition"
+nextDecisiveSquares := OrderedCollection new.
+
+self opponentPieces do: [ :opponent | 
+    | hypoSquares tempDecisiveSquares |
+    
+    "Opponent attackingSquares"
+    hypoSquares := opponent attackingSquares.
+
+    tempDecisiveSquares := hypoSquares select: [ :hsquare | 
+        | projectedOpponentSquares |
+        
+        "Simuler le mouvement de l'adversaire"
+        opponent nextSquare: hsquare.
+        projectedOpponentSquares := opponent attackingSquares.
+        opponent nextSquare: nil.
+
+        "Vérifier si cela correspond à une position critique pour le roi"
+        projectedOpponentSquares anySatisfy: [ :ps | 
+				(ps isNil not) and:[ (ps samePositionAs: king square) 
+             or: [ king attackingSquares anySatisfy: [ :ks | ks isNil not and: [ ks samePositionAs: ps ]  ] ] ].
+        ].
+    ].
+
+    "Ajouter les carrés décisifs trouvés"
+    nextDecisiveSquares addAll: tempDecisiveSquares.
+].
+
+nextDecisiveSquares := nextDecisiveSquares asSet asOrderedCollection.  
+
+defendingSquares := initialTargets select: [ :initial | 
+    "Simulate moving the piece to the square 'initial'"
+    self nextSquare: initial.
+
+    "Get the projected squares after the move"
+    projectedSquares := self attackingSquares.
+
+    "Reset the piece's position"
+    self nextSquare: nil.
+
+    "Check if the projected squares have a common element with 'nextDecisiveSquares'"
+    (nextDecisiveSquares intersection: projectedSquares) isEmpty not.
+].
+
+
+ allSquares := (allowedSquares , defendingSquares ) asOrderedCollection . 
+
+"^initialTargets "
+ ^ inCheck ifTrue: [ allSquares ]
+	ifFalse: [ initialTargets ] 
+
+
+]
+
+
 ```
+
+## Refactoring Overview
+
+The original method for checking the King’s safety included multiple responsibilities, such as:
+
+- Detecting whether the King is in check.
+- Calculating the allowed target squares for a piece’s movement.
+- Simulating opponent moves and determining if they pose a threat.
+- Identifying defending squares for the King.
+
+Due to the complexity, the method was hard to maintain and violated the single-responsibility principle. To address this, we broke the logic down into smaller methods that each handle a specific part of the calculation.
+
+## Key Refactored Methods
+
+### 1. **Attacking Squares Calculation**
+
+The `attackingSquares` method returns all the squares a piece can attack. This is critical for protecting the King, as we need to determine which squares might be under threat.
+
+```pharo
+MyPiece >> attackingSquares [
+    ^ self legalTargetSquares
+]
+```
+
+### 2. **Legal Target Squares**
+
+The `legalTargetSquares` method calculates all squares where a piece can legally move. This helps identify safe squares for the King, ensuring it doesn’t move to a square under attack.
+
+```pharo
+MyPiece >> legalTargetSquares [
+    ^ self targetSquaresLegal: true
+]
+```
+
+### 3. **Simulating Moves and Collecting Squares**
+
+We use the `collectSquares` method to gather squares based on conditions such as legality and movement direction. This method helps in simulating moves for the King’s protection.
+
+```pharo
+MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
+    ^ self collectSquares: aBlock while: [ :aSquare | 
+        aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+]
+```
+
+### 4. **Path Commands for Collecting Specific Squares**
+
+The `collectSquares: while: untilBlock` method is responsible for collecting squares based on specific conditions until a blocking condition is met, such as encountering an opponent’s piece.
+
+```pharo
+MyPiece >> collectSquares: collectBlock while: untilBlock [
+    | targets next |
+    targets := OrderedCollection new.
+
+    "Collect up right"
+    next := square.
+    [ untilBlock value: (next := collectBlock value: next) ]
+    whileTrue: [ targets add: next ].
+
+    "If we can hit the next piece, then add it too"
+    (next notNil and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
+
+    ^ targets
+]
+```
+
+### 5. **Moving to a Square**
+
+The `moveTo: aSquare` method simulates moving a piece to a target square, ensuring it’s a legal move before updating the piece’s position.
+
+```pharo
+MyPiece >> moveTo: aSquare [
+    (self legalTargetSquares includes: aSquare) ifFalse: [ ^ self ].
+    square emptyContents.
+    square := aSquare.
+    aSquare contents: self
+]
+```
+
+## Why Refactor?
+
+Pharo promotes writing simple, clean, and maintainable code. By refactoring the large method into smaller methods, we achieved the following benefits:
+
+- **Single Responsibility:** Each method now has a focused task, improving readability and maintenance.
+- **Modularity:** Methods like `collectSquares`, `attackingSquares`, and `moveTo:` can be reused across different parts of the game logic.
+- **Readability:** Smaller methods are easier to understand and follow, making the codebase more approachable.
+
+
+
+## Conclusion  
+- ** Kata 1 successfully structured pawn movement rules using an incremental approach and the State design pattern. Comprehensive testing helped detect and fix bugs efficiently.
+- ** Kata 2 successfully restricted legal (allied pieces and King's movement)  rules to protect the king. We refactored the big method we had in smaller more manageable methods.
+- ** kata 3 successfully refactored the piece rendering code into a cleaner and maintainable code.

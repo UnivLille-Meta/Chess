@@ -1,18 +1,18 @@
 Class {
-	#name : 'MyKing',
+	#name : 'King',
 	#superclass : 'MyPiece',
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
 }
 
 { #category : 'as yet unclassified' }
-MyKing >> attackingSquares [
+King >> attackingSquares [
 
 	^ self basicTargetSquares
 ]
 
 { #category : 'rendering' }
-MyKing >> basicTargetSquares [
+King >> basicTargetSquares [
 
 	"The king can move one square on each direction including diagonals"
 	^ {
@@ -28,13 +28,13 @@ MyKing >> basicTargetSquares [
 ]
 
 { #category : 'accessing' }
-MyKing >> id [
+King >> id [
 	
 	^ 'K'
 ]
 
 { #category : 'testing' }
-MyKing >> isCheckMated [
+King >> isCheckMated [
 	"We check if the opponent pieces target all my potential movements and myself"
 
 	| threatenedSquares |
@@ -46,7 +46,7 @@ MyKing >> isCheckMated [
 ]
 
 { #category : 'testing' }
-MyKing >> isInCheck [
+King >> isInCheck [
 	"We check if the opponent pieces target all my potential movements and myself"
 
 	| threatenedSquares |
@@ -57,26 +57,26 @@ MyKing >> isInCheck [
 ]
 
 { #category : 'testing' }
-MyKing >> isKing [
+King >> isKing [
 	
 	^ true
 ]
 
 { #category : 'accessing' }
-MyKing >> opponentPieces [
+King >> opponentPieces [
 
 	^ self board pieces select: [ :e |
 		  e notNil and: [ e color = color negated ] ]
 ]
 
 { #category : 'rendering' }
-MyKing >> renderPieceOn: aSquare [
+King >> renderPieceOn: aSquare [
 
 	^ aSquare renderKing: self
 ]
 
 { #category : 'rendering' }
-MyKing >> targetSquaresLegal: aBoolean [
+King >> targetSquaresLegal: aBoolean [
 	"The king cannot move to threatened squares"
 
 	| threatenedSquares |

@@ -1,5 +1,5 @@
 Class {
-	#name : 'MyChessSquare',
+	#name : 'ChessSquare',
 	#superclass : 'BlElement',
 	#instVars : [
 		'color',
@@ -15,13 +15,13 @@ Class {
 }
 
 { #category : 'api - text weight' }
-MyChessSquare class >> black [
+ChessSquare class >> black [
 
 	^ self color: Color black
 ]
 
 { #category : 'api - text weight' }
-MyChessSquare class >> color: aColor [
+ChessSquare class >> color: aColor [
 
 	^ self basicNew
 		  color: aColor;
@@ -30,13 +30,13 @@ MyChessSquare class >> color: aColor [
 ]
 
 { #category : 'api - text weight' }
-MyChessSquare class >> white [
+ChessSquare class >> white [
 
 	^ self color: Color white
 ]
 
 { #category : 'arithmetic' }
-MyChessSquare >> + aPoint [
+ChessSquare >> + aPoint [
 
 	| column file |
 	column := (self column asciiValue + aPoint x) asCharacter asString.
@@ -46,47 +46,47 @@ MyChessSquare >> + aPoint [
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> board [
+ChessSquare >> board [
 	^ board
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> board: aMyChessBoard [ 
+ChessSquare >> board: aMyChessBoard [ 
 	
 	board := aMyChessBoard
 ]
 
 { #category : 'initialization' }
-MyChessSquare >> click [
+ChessSquare >> click [
 
 	board click: self
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> color [
+ChessSquare >> color [
 
 	^ color
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> color: anObject [
+ChessSquare >> color: anObject [
 
 	color := anObject
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> column [
+ChessSquare >> column [
 	
 	^ name first
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> contents [
+ChessSquare >> contents [
 	^ contents
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> contents: aPiece [
+ChessSquare >> contents: aPiece [
 
 	| text |
 	contents := aPiece.
@@ -104,25 +104,25 @@ MyChessSquare >> contents: aPiece [
 ]
 
 { #category : 'api - configuration' }
-MyChessSquare >> down [
+ChessSquare >> down [
 
 	^ self + (0 @ -1)
 ]
 
 { #category : 'asd' }
-MyChessSquare >> emptyContents [
+ChessSquare >> emptyContents [
 	
 	self contents: nil
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> file [
+ChessSquare >> file [
 	
 	^ name second
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> foreground [
+ChessSquare >> foreground [
 			
 	^ color isBlack
 		ifTrue: [ board blackColor ]
@@ -130,19 +130,19 @@ MyChessSquare >> foreground [
 ]
 
 { #category : 'testing' }
-MyChessSquare >> hasPiece [
+ChessSquare >> hasPiece [
 	
 	^ contents isNil not
 ]
 
 { #category : 'highlighting' }
-MyChessSquare >> highlightTarget [
+ChessSquare >> highlightTarget [
 
 	self addChild: target
 ]
 
 { #category : 'initialization' }
-MyChessSquare >> initialize [
+ChessSquare >> initialize [
 
 	super initialize.
 	target := BlElement new
@@ -171,25 +171,25 @@ MyChessSquare >> initialize [
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> left [
+ChessSquare >> left [
 
 	^ self + (-1 @ 0)
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> name [
+ChessSquare >> name [
 	^ name
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> name: aString [
+ChessSquare >> name: aString [
 
 	name := aString.
 	label text: (name asRopedText foreground: color negated)
 ]
 
 { #category : 'printing' }
-MyChessSquare >> printOn: aStream [
+ChessSquare >> printOn: aStream [
 	"Generate a string representation of the receiver based on its instance variables."
 
 	super printOn: aStream.
@@ -199,114 +199,65 @@ MyChessSquare >> printOn: aStream [
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderBishop: aPiece [
-
-	^ aPiece isWhite
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'B' ]
-				  ifTrue: [ 'b' ] ]
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'V' ]
-				  ifTrue: [ 'v' ] ]
+ChessSquare >> renderBishop: aPiece [
+	self subclassResponsibility .
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderKing: aPiece [
+ChessSquare >> renderKing: aPiece [
 
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'L' ]
-				  ifTrue: [ 'l' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'K' ]
-				  ifTrue: [ 'k' ] ]
+	self subclassResponsibility .
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderKnight: aPiece [
+ChessSquare >> renderKnight: aPiece [
 
-	^ aPiece isWhite
-		  ifFalse: [ color isBlack
-				  ifFalse: [ 'M' ]
-				  ifTrue: [ 'm' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'N' ]
-				  ifTrue: [ 'n' ] ]
+	self subclassResponsibility .
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderPawn: aPiece [
-
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'O' ]
-				  ifTrue: [ 'o' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'P' ]
-				  ifTrue: [ 'p' ] ]
+ChessSquare >> renderPawn: aPiece [
+	self subclassResponsibility .
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderQueen: aPiece [
+ChessSquare >> renderQueen: aPiece [
 
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'W' ]
-				  ifTrue: [ 'w' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'Q' ]
-				  ifTrue: [ 'q' ] ]
+	self subclassResponsibility .
 ]
 
 { #category : 'rendering' }
-MyChessSquare >> renderRook: aPiece [
+ChessSquare >> renderRook: aPiece [
 
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'T' ]
-				  ifTrue: [ 't' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'R' ]
-				  ifTrue: [ 'r' ] ]
+	self subclassResponsibility .
 ]
 
 { #category : 'accessing' }
-MyChessSquare >> right [
+ChessSquare >> right [
 	
 	^ self + (1@0)
 ]
 
 { #category : 'initialization' }
-MyChessSquare >> select [
+ChessSquare >> select [
 	
 	self border: Color green
 ]
 
 { #category : 'highlighting' }
-MyChessSquare >> unhighlightTarget [
+ChessSquare >> unhighlightTarget [
 
 	self removeChild: target
 ]
 
 { #category : 'initialization' }
-MyChessSquare >> unselect [
+ChessSquare >> unselect [
 
 	self border: BlBorder empty
 ]
 
 { #category : 'instance creation' }
-MyChessSquare >> up [
+ChessSquare >> up [
 	
 	^ self + (0@1)
 ]
