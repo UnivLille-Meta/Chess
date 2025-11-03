@@ -30,3 +30,17 @@ MyKingTest >> testIsNotCheckBySameColorRook [
 
 	self deny: king isInCheck
 ]
+
+{ #category : 'tests' }
+MyKingTest >> testThreateningPieces [
+
+	| king board pairs |
+	board := MyChessBoard empty.
+	board at: 'e4' put: (king := MyKing white).
+
+	"Put an atacker rook on e column"
+	board at: 'e1' put: MyRook black.
+	pairs := king threateningPieces.
+	self assert: pairs size equals: 1.
+	self assert: (pairs anySatisfy: [ :each | each key class = MyRook ])
+]

@@ -92,3 +92,15 @@ MyKing >> targetSquaresLegal: aBoolean [
 						"Let's hope the piece is not defended"
 						threatenedSquares includes: s  ] ] ] ] ]
 ]
+
+{ #category : 'as yet unclassified' }
+MyKing >> threateningPieces [
+	"return collection of pairs piece and square of opponent"
+
+	| threats mySquare |
+	mySquare := self square.
+	threats := OrderedCollection new.
+	^ self opponentPieces
+		  select: [ :piece | piece attackingSquares includes: mySquare ]
+		  thenCollect: [ :piece | piece -> piece square ]
+]

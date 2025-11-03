@@ -162,6 +162,12 @@ MyPiece >> legalTargetSquares [
 ]
 
 { #category : 'path commands' }
+MyPiece >> legalTargetSquaresInCheck [
+
+	^ self targetSquaresLegalInCheck: true
+]
+
+{ #category : 'path commands' }
 MyPiece >> moveTo: aSquare [
 
 	(self legalTargetSquares includes: aSquare) ifFalse: [ ^ self ].
@@ -202,6 +208,12 @@ MyPiece >> targetSquares [
 
 { #category : 'rendering' }
 MyPiece >> targetSquaresLegal: aBoolean [
+
+	self subclassResponsibility
+]
+
+{ #category : 'rendering' }
+MyPiece >> targetSquaresLegalInCheck: aBoolean [
 
 	self subclassResponsibility
 ]
