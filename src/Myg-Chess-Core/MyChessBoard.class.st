@@ -117,18 +117,18 @@ MyChessBoard >> initialize [
 
 { #category : 'initialization' }
 MyChessBoard >> initializeFromFENBoard: aFENBoard [
-
 	aFENBoard keysAndValuesDo: [ :k :v |
-		v ~= 'empty' ifTrue: [
-			| substrings color piece |
-			substrings := v substrings.
-			color := substrings first.
-			piece := substrings second.
-			self
-				at: k
-				put:
-					((self class environment at: ('My' , piece capitalized) asSymbol)
-						 perform: color asLowercase asSymbol) ] ]
+			v ~= 'empty' ifTrue: [
+					| substrings color piece |
+					substrings := v substrings.
+					color := substrings first.
+					piece := substrings second.
+					self
+						at: k
+						put:
+							((self class environment at:
+								  ('My' , piece capitalized) asSymbol) perform:
+								 color asLowercase asSymbol) ] ]
 ]
 
 { #category : 'initialization' }

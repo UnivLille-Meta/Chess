@@ -138,13 +138,14 @@ MyChessGame >> pieces [
 
 { #category : 'playing' }
 MyChessGame >> play [
+	"currentPlayer play."
 
-	currentPlayer play.
+	currentPlayer play2.
 	currentPlayer = whitePlayer
 		ifTrue: [ currentPlayer := blackPlayer ]
-		ifFalse: [ 
-			moveCount := moveCount + 1.
-			currentPlayer := whitePlayer ].
+		ifFalse: [
+				moveCount := moveCount + 1.
+				currentPlayer := whitePlayer ].
 	self checkForMate
 ]
 

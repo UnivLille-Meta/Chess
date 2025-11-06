@@ -92,3 +92,38 @@ MyKing >> targetSquaresLegal: aBoolean [
 						"Let's hope the piece is not defended"
 						threatenedSquares includes: s  ] ] ] ] ]
 ]
+
+{ #category : 'rendering' }
+MyKing >> targetSquaresLegalInCheck: aBoolean [
+
+	| threatenedSquares attackers |
+	threatenedSquares := self opponentPieces flatCollect: [ :e |
+		                     e attackingSquares ].
+	attackers := self threateningPieces collect: [ :pair | pair key ].
+
+	"Le roi peut se deplacer dans une case :"
+	"1. non occupée par un ennemi"
+	"2. vide ou contenant une pièce ennemi non defendue"
+	^ self basicTargetSquares select: [ :s |
+			  s notNil and: [
+					  (threatenedSquares includes: s) not and: [
+							  s hasPiece not or: [ "la csae contient une pièce ennemi"
+									  s contents color ~= color and: [ "vérifier si la pièce n'est pas defendue"
+											  | squareThreats |
+											  squareThreats := self opponentPieces select: [ :p |
+												                   (p attackingSquares includes: s) and: [
+													                   p ~= s contents ] ].
+											  squareThreats isEmpty ] ] ] ] ]
+]
+
+{ #category : 'as yet unclassified' }
+MyKing >> threateningPieces [
+	"return collection of pairs piece and square of opponent"
+
+	| threats mySquare |
+	mySquare := self square.
+	threats := OrderedCollection new.
+	^ self opponentPieces
+		  select: [ :piece | piece attackingSquares includes: mySquare ]
+		  thenCollect: [ :piece | piece -> piece square ]
+]

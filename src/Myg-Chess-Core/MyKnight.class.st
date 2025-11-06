@@ -32,3 +32,33 @@ MyKnight >> targetSquaresLegal: aBoolean [
 		  select: [ :s |
 			  s notNil and: [ s hasPiece not or: [ s contents color ~= color ] ] ]
 ]
+
+{ #category : 'rendering' }
+MyKnight >> targetSquaresLegalInCheck: aBoolean [
+	| king threats moves safeSquares |
+
+	king := self ownKing.
+	threats := king threateningPieces.
+
+	threats isEmpty ifTrue: [ ^ self targetSquaresLegal: aBoolean ].
+
+	(threats size > 1 and: [ self isKing not ]) ifTrue: [
+		^ OrderedCollection new
+	].
+
+	"Tous les mouvements légaux possibles du cavalier"
+	moves := self targetSquaresLegal: aBoolean.
+
+	"Ne garder que les cases où il capture la pièce menaçante"
+	safeSquares := moves select: [ :sq |
+		threats anySatisfy: [ :assoc |
+			| attacker attackerSquare |
+			attacker := assoc key.
+			attackerSquare := assoc value.
+			sq = attackerSquare
+		]
+	].
+
+	^ safeSquares
+
+]

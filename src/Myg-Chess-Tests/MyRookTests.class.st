@@ -65,3 +65,24 @@ MyRookTests >> testMovesWithSameColorObstacle [
 			(#( e5 e6 e7 e8 d4 c4 b4 a4 f4 e3 e2 e1 ) collect: [ :name |
 				 board at: name ])
 ]
+
+{ #category : 'tests' }
+MyRookTests >> testTargetSquaresLegalInCheck [
+    | board king rook attacker squares |
+
+    board := MyChessBoard empty.
+
+    king := MyKing white.
+    rook := MyRook white.
+    attacker := MyRook black.
+
+    board at: 'e1' put: king.
+    board at: 'e8' put: attacker.
+    board at: 'e2' put: rook.  
+
+    squares := rook targetSquaresLegalInCheck: true.
+
+    "Maintenant la tour en e2 peut aller sur e3, e4, e5, e6, e7 pour bloquer"
+    self assert: (squares anySatisfy: [:sq | sq name = 'e3']).
+    self assert: (squares anySatisfy: [:sq | sq name = 'e4']).
+]

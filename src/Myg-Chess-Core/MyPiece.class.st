@@ -37,6 +37,21 @@ MyPiece >> board [
 	^ square board
 ]
 
+{ #category : 'accessing' }
+MyPiece >> canBlockThreatFrom: attackerSquare to: kingSquare on: targetSquare [
+    "Retourne true si la case targetSquare est sur la ligne entre attackerSquare et kingSquare,
+    peu importe le sens (haut/bas/gauche/droite/diagonale)."
+
+    | between1 between2 |
+
+    (attackerSquare isNil or: [kingSquare isNil or: [targetSquare isNil]]) ifTrue: [ ^ false ].
+
+    between1 := self squaresBetween: attackerSquare and: kingSquare.
+    between2 := self squaresBetween: kingSquare and: attackerSquare.
+
+    ^ (between1 , between2) anySatisfy: [:sq | sq = targetSquare]
+]
+
 { #category : 'rendering' }
 MyPiece >> collectSquares: aBlock [
 
@@ -162,13 +177,28 @@ MyPiece >> legalTargetSquares [
 ]
 
 { #category : 'path commands' }
+MyPiece >> legalTargetSquaresInCheck [
+
+	^ self targetSquaresLegalInCheck: true
+]
+
+{ #category : 'path commands' }
 MyPiece >> moveTo: aSquare [
 
 	(self legalTargetSquares includes: aSquare) ifFalse: [ ^ self ].
 
 	square emptyContents.
 	square := aSquare.
-	aSquare contents: self
+	aSquare contents: self.
+
+]
+
+{ #category : 'accessing' }
+MyPiece >> ownKing [
+
+	
+		^ (self board pieces reject: [ :p | p isNil ]) detect: [ :p |
+			  p isKing and: [ p color = self color ] ] 
 ]
 
 { #category : 'rendering' }
@@ -195,6 +225,72 @@ MyPiece >> square: aMyChessSquare [
 ]
 
 { #category : 'rendering' }
+MyPiece >> squaresBetween: square1 and: square2 [
+	 "Retourne les cases entre square1 et square2 (hors extrémités)"
+    
+    | squares board col1 col2 row1 row2 |
+    squares := OrderedCollection new.
+
+    (square1 isNil or: [square2 isNil]) ifTrue: [ ^ squares ].
+    board := square1 board.
+    board ifNil: [ ^ squares ].
+
+    "Récupération des coordonnées"
+    col1 := square1 column.  "caractère comme $e"
+    col2 := square2 column.
+    row1 := square1 file asString asInteger.  "Conversion safe"
+    row2 := square2 file asString asInteger.
+
+    "Cas vertical (même colonne)"
+    (col1 = col2) ifTrue: [
+        | startRow endRow |
+        startRow := row1 min: row2.
+        endRow := row1 max: row2.
+        (startRow + 1 to: endRow - 1) do: [:r |
+            | caseName targetSquare |
+            caseName := col1 asString , r asString.
+            targetSquare := board at: caseName ifAbsent: nil.
+            targetSquare ifNotNil: [ squares add: targetSquare ].
+        ].
+        ^ squares
+    ].
+
+    "Cas horizontal (même rangée)"
+    (row1 = row2) ifTrue: [
+        | startCol endCol |
+        startCol := col1 asciiValue min: col2 asciiValue.
+        endCol := col1 asciiValue max: col2 asciiValue.
+        (startCol + 1 to: endCol - 1) do: [:c |
+            | caseName targetSquare |
+            caseName := (c asCharacter asString) , row1 asString.
+            targetSquare := board at: caseName ifAbsent: nil.
+            targetSquare ifNotNil: [ squares add: targetSquare ].
+        ].
+        ^ squares
+    ].
+
+    "Cas diagonale"
+    ((col1 asciiValue - col2 asciiValue) abs = (row1 - row2) abs) ifTrue: [
+        | colDir rowDir steps |
+        colDir := (col2 asciiValue - col1 asciiValue) sign.
+        rowDir := (row2 - row1) sign.
+        steps := (col2 asciiValue - col1 asciiValue) abs - 1.
+        
+        1 to: steps do: [:i |
+            | newCol newRow caseName targetSquare |
+            newCol := (col1 asciiValue + (colDir * i)) asCharacter.
+            newRow := row1 + (rowDir * i).
+            caseName := newCol asString , newRow asString.
+            targetSquare := board at: caseName ifAbsent: nil.
+            targetSquare ifNotNil: [ squares add: targetSquare ].
+        ].
+        ^ squares
+    ].
+
+    ^ squares
+]
+
+{ #category : 'rendering' }
 MyPiece >> targetSquares [
 
 	^ self targetSquaresLegal: false
@@ -202,6 +298,12 @@ MyPiece >> targetSquares [
 
 { #category : 'rendering' }
 MyPiece >> targetSquaresLegal: aBoolean [
+
+	self subclassResponsibility
+]
+
+{ #category : 'rendering' }
+MyPiece >> targetSquaresLegalInCheck: aBoolean [
 
 	self subclassResponsibility
 ]
