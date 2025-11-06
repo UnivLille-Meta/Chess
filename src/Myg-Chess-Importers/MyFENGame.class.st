@@ -31,6 +31,11 @@ MyFENGame >> castlingAbility: aCollection [
 ]
 
 { #category : 'accessing' }
+MyFENGame >> enPassantTargetSquare [
+	^ enPassantTargetSquare
+]
+
+{ #category : 'accessing' }
 MyFENGame >> enPassantTargetSquare: aString [ 
 	enPassantTargetSquare := aString
 ]

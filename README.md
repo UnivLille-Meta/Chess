@@ -1,33 +1,33 @@
 # Myg Chess Game
 
-This is a chess game for Pharo based on Bloc, Toplo and Myg.
+Jeu d'échecs pour Pharo basé sur Bloc, Toplo et Myg.
 
-## What is this repository really about
+## À propos du projet
 
-The goal of this repository is not to be a complete full blown game, but a good enough implementation to practice software engineering skills:
- - testing
- - reading existing code
- - refactorings
- - profiling
- - debugging
+Ce projet est conçu pour pratiquer les compétences suivantes:
 
-## Getting started
+- Tests 
+- Lecture de code existant
+- Refactorings
+- Débogage
 
-### Getting the code
+## Installation
 
-This code has been tested in Pharo 12. You can get it by installing the following baseline code:
+### Charger le code
+
+Ce code a été testé avec Pharo 13.0 64-bit. Pour l'installer, utilisez le baseline Metacello suivant :
 
 ```smalltalk
 Metacello new
-	repository: 'github://UnivLille-Meta/Chess:main';
+	repository: 'github://MWB21223/Chess:main';
 	baseline: 'MygChess';
 	onConflictUseLoaded;
 	load.
 ```
 
-### Using it
+## Démarrer une partie
 
-You can open the chess game using the following expression:
+Pour ouvrir le jeu d'échecs, utilisez l'expression suivante :
 
 ```smalltalk
 board := MyChessGame freshGame.
@@ -39,233 +39,165 @@ space resizable: true.
 space show.
 ```
 
-## Relevant Design Points
 
-This repository contains:
- - a chess model: the board/squares, the pieces, their movements, how they threat each other
- - a UI using Bloc and Toplo: a board is rendered as bloc UI elements. Each square is a UI element that contains a selection, an optional piece. Pieces are rendered using a text element and a special chess font (https://github.com/joshwalters/open-chess-font/tree/master).
- - Textual game importers for the PGN and FEN standards (see https://ia902908.us.archive.org/26/items/pgn-standard-1994-03-12/PGN_standard_1994-03-12.txt and https://www.chessprogramming.org/Forsyth-Edwards_Notation#Samples)
+## KATA : Correction des mouvements de pions
 
-## Katas
+### Objectif
 
-These are some ideas of exercises you may try:
+Corriger les mouvements des pions, incluant :
 
-### Fix pawn moves!
+- Double pas initial (2 cases depuis la rangée de départ)
+- Captures diagonales
+- Prise en passant
 
-**Goal:** Practice debugging and testing
+### Implémentation réalisée
 
-Pawns are one of the most complicated pieces of chess to implement.
-They move forward, one square at a time, except for their first movement.
-However, they can move diagonally to capture other pieces.
-And in addition, there is the (in)famous "En passant" move that complicates everything (see https://en.wikipedia.org/wiki/En_passant, and the FEN documentation for ideas on how to encode this information https://www.chessprogramming.org/Forsyth-Edwards_Notation#En_passant_target_square).
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
+#### 1. Structure modulaire des mouvements de pions
 
-Questions and ideas that can help you in the process:
-- Can you write tests showing the bugs?
-- What kind of tools can you use to spot the bug?
-- Can you approach this incrementally? This is, splitting this task in many subtasks. How would you prioritize them?
+Les mouvements des pions ont été décomposés en méthodes séparées pour une meilleure lisibilité et maintenabilité :
 
-### Restrict legal moves
+**`MyPawn >> forwardMoveSquares`**
 
-**Goal:** Practice code understanding, refactorings and debugging
+- Gère l'avancée des pions (1 ou 2 cases)
+- Vérifie que les cases sont libres
+- Permet le double pas uniquement depuis la rangée initiale (rangée 2 pour blanc, rangée 7 pour noir)
+- Détecte les blocages
 
-In chess, when we are not in danger we can move any piece we want in general, as soon as we follow the rules.
-However, when the king gets threatened, we must protect it!
-The only legal moves in that scenario are the ones that save the king (or otherwise we lose).
-What are moves that protect the king? The ones that capture the attacker, block the attack, or move the king out of danger.
-Another way to see it is: A move protects the king if it moves it out of check.
+**`MyPawn >> diagonalCaptureSquares`**
 
-The current implementation does not support this restriction.
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
+- Retourne les cases diagonales capturables
+- Vérifie qu'une pièce adverse est présente
+- Ne permet pas de capturer des alliés
 
-Questions and ideas that can help you in the process:
-- What tools help you finding the right place to put this new code?
-- How do you avoid repeating all the existing code computing legal moves and checks?
+**`MyPawn >> enPassantTargetSquares`**
 
-### Fuzz the board
+- Retourne la/les case(s) de prise en passant disponibles
+- Lit la case cible depuis `MyChessGame enPassantTargetSquare`
+- Vérifie que la case EP est accessible en diagonale depuis la position du pion
 
-**Goal:** Practice fuzzing and automated testing on the board
+**`MyPawn >> targetSquaresLegal:`**
 
-Are we sure the game works? We would like to add automated testing in the loop.
-You can do it.
+- Compose les trois familles de mouvements : avancée, capture diagonale, en passant
+- Méthode principale utilisée par l'UI pour afficher les mouvements possibles
 
-Questions and ideas that can help you in the process:
-- A board can be configured from a FEN format string. What if you generate FEN strings automatically?
-- Once a board is configured, you can test moves. Can you generate (in)valid moves and validate they were correct?
-- The parsers inside the game are probably a nice target for fuzzing too. Did you consider that they may be buggy?
-- Do not forget to test "ugly and invalid scenarios" too
+#### 2. Gestion de la prise en passant
 
-### Implement more bot gaming strategies
+**Dans `MyChessGame` :**
 
-**Goal:** Practice refactorings and algorithms
+- **`enPassantTargetSquare`** : Variable d'instance stockant la case cible en passant (ou `nil`)
+- **`enPassantTargetSquare:`** : Accesseur pour définir la case EP
+- **`move:piece to:square`** : Mis à jour pour :
+  - Détecter un double pas de pion (écart de 2 rangées)
+  - Définir la case EP comme la case franchie (milieu du double pas)
+  - Réinitialiser la case EP à `nil` après tout autre coup
 
-Currently the engine allows players to play automatically using a "random move" strategy.
-However, many different automatic strategies can be implemented: https://www.youtube.com/watch?v=DpXy041BIlA.
-How can we plug those into the game?
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
+**Dans `MyChessGame >> initializeFromFENGame:` :**
 
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Can you do the refactoring in little steps that avoid breaking the code?
-- Introducing a new game "AI" may require that we expose new methods in the engine.
+- Initialise la case EP depuis la FEN si présente
+- Convertit la notation FEN (ex: "e3") en case du plateau
 
-### Remove nil checks
+**Dans `MyPawn >> moveTo:` :**
 
-**Goal:** Practice refactorings and patterns
+- Détecte si le mouvement est une prise en passant
+- Retire le pion capturé de la case derrière la case EP (case franchie)
+- Effectue le mouvement normal
 
-In the game, each square has optionally a piece.
-The absence of a piece is represented as a `nil`.
-As any project done in stress during a short period of time (a couple of evenings when the son is sick), the original developer (Guille P) was not 100% following coding standards and quality recommendations.
-We would like to clean up the game logic and remove `nil` checks using some polymorphism.
-You can do it.
 
-Questions and ideas that can help you in the process:
-- How do we transform nil checks into polymorphism?
-- What kind of API should you design?
-- Can tests help you do it with less pain?
-- Something similar happens when a pieces wants to move outside of the board, can you find it and fix it?
+### Tests implémentés
 
-### Refactor piece rendering
+#### Tests d'avancée et blocages
 
-**Goal:** Practice refactorings, double dispatch and table dispatch
+- `testPawnAdvancesOneSquare` : Vérifie l'avancée d'une case
+- `testPawnCanMakeInitialDoubleMove` : Vérifie le double pas initial
+- `testPawnBlockedCannotMove` : Vérifie qu'un pion bloqué ne peut pas avancer
+- `testPawnCannotJumpOverObstacleForDoubleMove` : Vérifie qu'on ne peut pas sauter pour le double pas
+- `testPawnCannotDoubleMoveFromNonInitialRank` : Vérifie qu'on ne peut pas faire de double pas depuis une autre rangée
 
-The game renders pieces with methods that look like these:
+#### Tests de capture diagonale
 
-```smalltalk
-MyChessSquare >> renderKnight: aPiece
+- `testPawnCanCaptureDiagonallyLeft` : Vérifie la capture diagonale gauche
+- `testPawnCanCaptureDiagonallyRight` : Vérifie la capture diagonale droite
+- `testPawnCannotCaptureDiagonallyOnEmptySquare` : Vérifie qu'on ne peut pas capturer en diagonale sur une case vide
 
-	^ aPiece isWhite
-		  ifFalse: [ color isBlack
-				  ifFalse: [ 'M' ]
-				  ifTrue: [ 'm' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'N' ]
-				  ifTrue: [ 'n' ] ]
+#### Tests de prise en passant
+
+- `testEnPassantWhiteCapturesAfterBlackDoubleStep` : Vérifie qu'un pion blanc peut capturer en passant un pion noir qui vient de faire un double pas
+- `testEnPassantExpiresAfterOtherMove` : Vérifie que la possibilité de prise en passant expire après un autre coup
+
+
+## Difficultés rencontrées
+
+### Compréhension du projet
+
+La première difficulté a été de comprendre la structure globale du projet et son architecture. Il a fallu analyser les différentes classes, leurs responsabilités et leurs interactions. De plus, la compréhension des règles d'échecs de base, notamment la règle complexe de la **prise en passant**, n'était pas évidente au départ.
+
+### Problèmes techniques
+
+#### Installation et configuration (Rayane)
+
+- Difficultés avec l'interface Pharo (installation projet)
+- Problèmes de configuration des repositories
+- Difficultés à importer le projet dans Pharo
+
+**Solution** : Migration de certains fichiers depuis l'invite de commande pour contourner les problèmes d'interface.
+
+#### Gestion de version avec Git (Ilyas)
+
+- Problèmes pour pousser le code via Pharo (liaison avec Git)
+- Divergences entre le code poussé sur GitHub et le code réellement présent dans Pharo
+- Synchronisation difficile entre l'environnement local et le dépôt distant
+
+**Solution** : Délégation des codes et push/commit à Rayane, qui pouvait effectuer ces opérations sans problèmes puis basculement sur le push via linux/vscode.
+
+Ces problèmes techniques ont été résolus progressivement en trouvant des alternatives pour pouvoir avancer le plus rapidement possible dans le développement.
+
+## Démarche adoptée
+
+### Approche méthodique
+
+Nous avons adopté une approche réfléchie et structurée pour mener à bien ce projet :
+
+1. **Reverse Engineering** : 
+   - Analyse approfondie du code existant pour comprendre l'architecture
+   - Identification des responsabilités de chaque classe
+   - Compréhension des mécanismes de mouvement des pions
+
+2. **Test-Driven Development (TDD)** :
+   - Écriture des tests en premier pour les fonctionnalités de base
+   - Tests pour les fonctionnalités non encore implémentées (capture diagonale et prise en passant)
+   - Les tests de prise en passant ont été poussés plus tard à cause des problèmes de push Git rencontrés par Ilyas
+
+3. **Débogage** :
+   - Utilisation principale du débogueur intégré de Pharo
+   - Analyse pas à pas du code pour identifier les bugs
+   - Vérification des états intermédiaires lors de l'exécution
+
+4. **Vérification** :
+   - Validation que toutes les fonctionnalités fonctionnent correctement
+   - Exécution de la suite complète de tests
+   - Vérification manuelle des comportements dans l'interface
+   - Ajout de commentaires dans le code pour une meilleure communications entre nous.
+
+
+Cette démarche nous a permis de progresser de manière structurée et de garantir la qualité du code produit.
+
+## Structure des fichiers
+
 ```
-As any project done in stress during a short period of time (a couple of evenings when the son is sick), the original developer (Guille P) was not 100% following coding standards and quality recommendations.
-We would like you to clean up this rendering logic and remove as much conditionals as possible, for the sake of it.
-You can do it.
-
-Questions and ideas that can help you in the process:
-- Can you do an implementation with double dispatch?
-- Can you do an implementation with table dispatch?
-- What are the good and bad parts of them in *this scenario*? Do you understand why?
-
-### Make the chess board graphical editor
-
-**Goal:** Practice large refactorings to decouple game logic from rendering
-
-The current UI is really tied to the game engine. Clicking on the squares will try to move the pieces and play the game.
-We would like to do a graphical board editor and reuse the graphics.
-But this editor does not need the game logic behind.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Refactoring and testing UI code can be challenging: this does not mean it is impossible!
-- Can you do the refactoring in little steps that avoid breaking the code?
-
-### Make the game UI themable
-
-**Goal:** Practice large refactorings to decouple game logic from rendering
-
-Instead of using a font, try using assets from https://opengameart.org/art-search-advanced?field_art_tags_tid=chess or https://game-icons.net/.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- How could you know that you're not breaking something while refactoring?
-- Can you write tests that help you with the process?
-- Refactoring and testing UI code can be challenging: this does not mean it is impossible!
-- Can you do the refactoring in little steps that avoid breaking the code?
-
-### Add pawn promotion
-
-**Goal:** Practice code understanding and debugging
-
-When pawns arrive to the back of the board, the pawn is promoted: it is transfomed into a major (queen, rook) or minor piece (knight, bishop), choice of the player.
-When in an interactive UI, this requires asking the user what to do.
-When in an automatic player/bot, this requires some automated decision approach.
-
-As any *complicated* feature, the original developer (Guille P) left this for the end, and then left the project.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- What tools help you finding the right place to put this new code?
-- How can you find documentation and help to understand the graphical part that will implement, for example, a pop-up?
-- The bot will not need a UI, how would you make it work without breaking the other existing code?
-
-### Implement the 9 queens problem
-
-**Goal:** Practice refactoring and algorithms
-
-Chess players like puzzles. One well-known puzzle is the 9 queens puzzle (https://www.chessvariants.com/problems.dir/9queens.html).
-The player should put 9 queens on the board without having them threat each other.
-You have to implement the game reusing the existing code (the queens implementation, the board).
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- What parts of the original code are useful for you and which ones are not? Can you make the game extensible to take this into account?
-- The 9 queens game has a different winning condition than a normal game chess, how can you plug different winning conditions?
-
-### Game Replay
-
-**Goal:** Practice refactoring and debugging
-
-A common practice between chess players is to study old games.
-Fortunately, many old games exist digitalized in PGN format, and the engine has initial support for it!
-You have to implement a replay feature, where a game is imported and the player move the game forward/backwards given the list of moves.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- How should you extend the UI to implement this feature?
-- What would happen if the PGN support is not complete/perfect? How can you manage to improve it?
-
-### Positional Heatmap
-
-**Goal:** Practice refactoring, code understanding and a bit of profiling
-
-Chess pieces have a certain influence in the board.
-For example, a queen controls all squares in its diagonals, ranks and columns.
-However, when many pieces are in the game, understanding how such control gives advantage to a player is difficult.
-Players need a lot of mental calculation.
-
-Your task is to build a heatmap as in https://tlee753.com/chess-visualizer/, where the background color of the square is chosen depending on the influence of each player.
-Strong white control is green. Strong black control is red.
-As any *crazy* feature, the original developer (Guille P) did not prepare the engine for this.
-But you can do it.
-
-Questions and ideas that can help you in the process:
-- How can this support be plugged in as an optional feature in the game?
-- Computing the influence could be an expensive analysis. Can you profile your code to see if there are potential improvements you can do?
-
-### Chess Variants
-
-https://www.chess.com/terms/chess-variants
-
- - Horde
- - Fog of War
- - Atomic
- - 3-check
- - King of the hill
-
-### Chess puzzles database integration
-
-http://www.bstephen.me.uk/meson/meson.pl?opt=top
-https://www.yacpdb.org/#static/home
-
-## Troubleshotting
-
-- Exceptions in the Myg UI thread stop the event cycle. This makes the game "freeze": it receives events but the thread that treats them is not running. To restart the UI thread, execute the following:
-```smalltalk
-BlParallelUniverse all do: #startUniverse.
+src/
+├── BaselineOfMygChess/          # Configuration Metacello
+├── Myg-Chess-Core/              # Logique métier
+│   ├── MyPawn.class.st          # Implémentation des pions (KATA)
+│   ├── MyChessGame.class.st     # Gestion de la partie
+│   ├── MyChessBoard.class.st    # Plateau d'échecs
+│   ├── MyChessSquare.class.st   # Cases du plateau
+│   └── ...                      # Autres pièces
+├── Myg-Chess-Importers/         # Import FEN/PGN
+│   ├── MyFENParser.class.st
+│   └── MyFENGame.class.st
+└── Myg-Chess-Tests/             
+    ├── MyPawnTest.class.st      # Tests unitaires de nos pions 
+    └── ...
 ```
+
+

@@ -23,7 +23,8 @@ Class {
 		'movesLabel',
 		'moveCountLabel',
 		'moves',
-		'dsp'
+		'dsp',
+		'enPassantTargetSquare'
 	],
 	#category : 'Myg-Chess-Core',
 	#package : 'Myg-Chess-Core'
@@ -54,6 +55,18 @@ MyChessGame >> checkForMate [
 
 	whitePlayer king isCheckMated ifTrue: [ self halt: 'Black wins!' ].
 	blackPlayer king isCheckMated ifTrue: [ self halt: 'White wins!' ].
+]
+
+{ #category : 'accessing' }
+MyChessGame >> enPassantTargetSquare [
+	^ enPassantTargetSquare
+
+
+]
+
+{ #category : 'accessing' }
+MyChessGame >> enPassantTargetSquare: aSquareOrNil [
+	enPassantTargetSquare := aSquareOrNil
 ]
 
 { #category : 'initialization' }
@@ -87,7 +100,7 @@ MyChessGame >> initializeFonts [
 { #category : 'initialization' }
 MyChessGame >> initializeFromFENGame: aFENGame [
 
-	| button infoPane |
+	| button infoPane 	 epField |
 	aFENGame sideToMove = 'White'
 		ifTrue: [ currentPlayer := whitePlayer ]
 		ifFalse: [ currentPlayer := blackPlayer ].
@@ -96,6 +109,11 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 
 	board := MyChessBoard fromFENBoard: aFENGame board.
 	board game: self.
+
+epField := aFENGame enPassantTargetSquare.
+enPassantTargetSquare := (epField = 'NO ENPASSANT')
+	ifTrue: [ nil ]
+	ifFalse: [ board at: (epField first asString , epField second asString) ].
 	button := ToButton new.
 	button labelText: 'Play!'.
 	button whenClickedDo: [ self play ].
@@ -124,10 +142,44 @@ MyChessGame >> initializeFromFENGame: aFENGame [
 ]
 
 { #category : 'public' }
-MyChessGame >> move: piece to: square [
+MyChessGame >> move: piece to: targetSquare [
+	| fromSquare toSquare deltaRanks middleSquare |
+	fromSquare := piece square.
 
-	piece moveTo: square.
-	self recordMovementOf: piece to: square
+	"Effectuer le mouvement (la pièce peut refuser si illégal)"
+	piece moveTo: targetSquare.
+	toSquare := piece square.
+
+	"Si rien n’a bougé, on ne touche pas à EP"
+	(fromSquare = toSquare) ifTrue: [ ^ self recordMovementOf: piece to: toSquare ].
+
+	"Mettre à jour la case EP uniquement après un double-pas de pion"
+	(piece class = MyPawn)
+		ifTrue: [
+			deltaRanks := (toSquare file asciiValue - fromSquare file asciiValue) abs.
+			deltaRanks = 2
+				ifTrue: [
+					middleSquare := piece isWhite
+						ifTrue: [ fromSquare up ]
+						ifFalse: [ fromSquare down ].
+					self enPassantTargetSquare: middleSquare ]
+				ifFalse: [ self enPassantTargetSquare: nil ] ]
+		ifFalse: [
+			"Tout autre coup annule la fenêtre EP"
+			self enPassantTargetSquare: nil ].
+
+	self recordMovementOf: piece to: toSquare
+]
+
+{ #category : 'accessing' }
+MyChessGame >> board [
+	^ board
+]
+
+{ #category : 'accessing' }
+MyChessGame >> at: aCoordinate [
+	"Délègue l'accès aux cases du plateau"
+	^ board at: aCoordinate
 ]
 
 { #category : 'accessing' }
