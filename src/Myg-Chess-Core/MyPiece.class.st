@@ -119,6 +119,19 @@ MyPiece >> downRightDiagonalLegal: aBoolean [
 		  legal: aBoolean
 ]
 
+{ #category : 'as yet unclassified' }
+MyPiece >> helpsKing: position [ 
+    ^ self game canMove: self to: position 
+]
+
+{ #category : 'as yet unclassified' }
+MyPiece >> helpsKing: position aKing: king [
+     |gameBis|
+    gameBis := self game copy.         
+    gameBis move: self to: position. 
+    ^ gameBis king isInCheck not. 
+]
+
 { #category : 'accessing' }
 MyPiece >> id [
 
