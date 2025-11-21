@@ -11,10 +11,28 @@ MyKnight >> id [
 	^ 'N'
 ]
 
-{ #category : 'rendering' }
-MyKnight >> renderPieceOn: aSquare [
+{ #category : 'as yet unclassified' }
+MyKnight >> renderingSquareBlackPieceBlack [ 
 
-	^ aSquare renderKnight: self
+	^ 'M'
+]
+
+{ #category : 'as yet unclassified' }
+MyKnight >> renderingSquareBlackPieceWhite [ 
+
+	^ 'm'
+]
+
+{ #category : 'as yet unclassified' }
+MyKnight >> renderingSquareWhitePieceBlack [ 
+
+	^ 'N'
+]
+
+{ #category : 'as yet unclassified' }
+MyKnight >> renderingSquareWhitePieceWhite [ 
+
+	^ 'n'
 ]
 
 { #category : 'rendering' }

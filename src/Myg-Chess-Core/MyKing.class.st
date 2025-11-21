@@ -69,10 +69,28 @@ MyKing >> opponentPieces [
 		  e notNil and: [ e color = color negated ] ]
 ]
 
-{ #category : 'rendering' }
-MyKing >> renderPieceOn: aSquare [
+{ #category : 'as yet unclassified' }
+MyKing >> renderingSquareBlackPieceBlack [ 
 
-	^ aSquare renderKing: self
+	^ 'L'
+]
+
+{ #category : 'as yet unclassified' }
+MyKing >> renderingSquareBlackPieceWhite [
+
+	^ 'l'
+]
+
+{ #category : 'as yet unclassified' }
+MyKing >> renderingSquareWhitePieceBlack [ 
+
+	^ 'K'
+]
+
+{ #category : 'as yet unclassified' }
+MyKing >> renderingSquareWhitePieceWhite [ 
+
+	^ 'k'
 ]
 
 { #category : 'rendering' }

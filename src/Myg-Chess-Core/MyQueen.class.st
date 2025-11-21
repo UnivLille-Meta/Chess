@@ -5,10 +5,28 @@ Class {
 	#package : 'Myg-Chess-Core'
 }
 
-{ #category : 'rendering' }
-MyQueen >> renderPieceOn: aSquare [
+{ #category : 'as yet unclassified' }
+MyQueen >> renderingSquareBlackPieceBlack [ 
 
-	^ aSquare renderQueen: self
+	^ 'W'
+]
+
+{ #category : 'as yet unclassified' }
+MyQueen >> renderingSquareBlackPieceWhite [ 
+
+	^ 'w'
+]
+
+{ #category : 'as yet unclassified' }
+MyQueen >> renderingSquareWhitePieceBlack [
+
+	^ 'Q'
+]
+
+{ #category : 'as yet unclassified' }
+MyQueen >> renderingSquareWhitePieceWhite [
+
+	^ 'q'
 ]
 
 { #category : 'rendering' }

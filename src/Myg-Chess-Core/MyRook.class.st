@@ -10,10 +10,28 @@ MyRook >> id [
 	^ 'R'
 ]
 
-{ #category : 'rendering' }
-MyRook >> renderPieceOn: aSquare [
+{ #category : 'as yet unclassified' }
+MyRook >> renderingSquareBlackPieceBlack [ 
 
-	^ aSquare renderRook: self
+	^ 'T'
+]
+
+{ #category : 'as yet unclassified' }
+MyRook >> renderingSquareBlackPieceWhite [ 
+
+	^ 't'
+]
+
+{ #category : 'as yet unclassified' }
+MyRook >> renderingSquareWhitePieceBlack [
+
+	^ 'R'
+]
+
+{ #category : 'as yet unclassified' }
+MyRook >> renderingSquareWhitePieceWhite [ 
+
+	^ 'r'
 ]
 
 { #category : 'rendering' }

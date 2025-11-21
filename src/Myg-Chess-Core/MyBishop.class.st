@@ -11,10 +11,28 @@ MyBishop >> id [
 	^ 'B'
 ]
 
-{ #category : 'rendering' }
-MyBishop >> renderPieceOn: aSquare [
+{ #category : 'as yet unclassified' }
+MyBishop >> renderingSquareBlackPieceBlack [
 
-	^ aSquare renderBishop: self
+	^ 'V'
+]
+
+{ #category : 'as yet unclassified' }
+MyBishop >> renderingSquareBlackPieceWhite [ 
+
+	^ 'v'
+]
+
+{ #category : 'as yet unclassified' }
+MyBishop >> renderingSquareWhitePieceBlack [
+
+	^ 'B'
+]
+
+{ #category : 'as yet unclassified' }
+MyBishop >> renderingSquareWhitePieceWhite [
+
+	^ 'b'
 ]
 
 { #category : 'rendering' }

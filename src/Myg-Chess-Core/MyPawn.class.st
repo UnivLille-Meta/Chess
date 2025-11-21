@@ -11,10 +11,28 @@ MyPawn >> id [
 	^ 'P'
 ]
 
-{ #category : 'rendering' }
-MyPawn >> renderPieceOn: aSquare [ 
-	
-	^ aSquare renderPawn: self
+{ #category : 'as yet unclassified' }
+MyPawn >> renderingSquareBlackPieceBlack [
+
+	^ 'O'
+]
+
+{ #category : 'as yet unclassified' }
+MyPawn >> renderingSquareBlackPieceWhite [
+
+	^ 'o'
+]
+
+{ #category : 'as yet unclassified' }
+MyPawn >> renderingSquareWhitePieceBlack [
+
+	^ 'P'
+]
+
+{ #category : 'as yet unclassified' }
+MyPawn >> renderingSquareWhitePieceWhite [
+
+	^ 'p'
 ]
 
 { #category : 'rendering' }
