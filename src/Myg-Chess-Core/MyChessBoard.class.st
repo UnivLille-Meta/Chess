@@ -198,18 +198,18 @@ MyChessBoard >> initializeSquares [
 				          ifTrue: [
 					          black := false.
 					          MyChessSquare basicNew
-						          color: Color black;
+						          color: MyBlackSquare new;
 						          board: self;
 						          initialize;
-						          contents: nil;
+						          contents: MyNilPiece new;
 						          yourself ]
 				          ifFalse: [
 					          black := true.
 					          MyChessSquare basicNew
-						          color: Color white;
+						          color: MyWhiteSquare new;
 						          board: self;
 						          initialize;
-						          contents: nil;
+						          contents: MyNilPiece new;
 						          yourself ].
 			square name: squareNotation.
 			grid at: squareNotation put: square.

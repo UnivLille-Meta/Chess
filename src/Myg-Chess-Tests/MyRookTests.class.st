@@ -12,6 +12,15 @@ MyRookTests >> testId [
 ]
 
 { #category : 'tests' }
+MyRookTests >> testIsPiece [ 
+	"Test if the rookPiece is a piece"
+	| rookPiece |
+	
+   rookPiece := MyRook new.
+	self assert: (rookPiece isPiece).
+]
+
+{ #category : 'tests' }
 MyRookTests >> testMoves [
 
 	| rook squares board |
@@ -64,4 +73,50 @@ MyRookTests >> testMovesWithSameColorObstacle [
 		includesAll:
 			(#( e5 e6 e7 e8 d4 c4 b4 a4 f4 e3 e2 e1 ) collect: [ :name |
 				 board at: name ])
+]
+
+{ #category : 'tests' }
+MyRookTests >> testRenderBlackRookOnABlackSquare [
+
+	| tmp1 tmp2 |
+	tmp1 := MyRook black.
+	tmp2 := MyChessSquare color: MyBlackSquare new.
+	self assert: (tmp2 renderPiece: tmp1) equals: 't'
+]
+
+{ #category : 'tests' }
+MyRookTests >> testRenderBlackRookOnAWhiteSquare [
+
+	| tmp1 tmp2 |
+	tmp1 := MyRook black.
+	tmp2 := MyChessSquare color: MyWhiteSquare new.
+	self assert: (tmp2 renderPiece: tmp1) equals: 'T'
+]
+
+{ #category : 'tests' }
+MyRookTests >> testRenderWhiteRookOnABlackSquare [
+
+	| tmp1 tmp2 |
+	tmp1 := MyRook white.
+	tmp2 := MyChessSquare color: MyBlackSquare new.
+	self assert: (tmp2 renderPiece: tmp1) equals: 'r'
+]
+
+{ #category : 'tests' }
+MyRookTests >> testRenderWhiteRookOnAWhiteSquare [
+
+	| tmp1 tmp2 |
+	tmp1 := MyRook white.
+	tmp2 := MyChessSquare color: MyWhiteSquare new.
+	self assert: (tmp2 renderPiece: tmp1) equals: 'R'
+]
+
+{ #category : 'tests' }
+MyRookTests >> testRookStopsAtBoardEdge [
+	| board rook squares |
+	board := MyChessBoard empty.
+	board at: 'd4' put: (rook := MyRook white).
+
+	squares := rook collectSquares: [ :sq | sq up ].
+	self assert: ((squares collect: #name) includesAll: #('d5' 'd6' 'd7' 'd8')).
 ]

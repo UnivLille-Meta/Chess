@@ -37,12 +37,13 @@ MyChessSquare class >> white [
 
 { #category : 'arithmetic' }
 MyChessSquare >> + aPoint [
-
+"Return the square after moving by aPoint but if its offboard we return a MyNilSquare "
 	| column file |
 	column := (self column asciiValue + aPoint x) asCharacter asString.
 	file := (self file asciiValue + aPoint y) asCharacter asString.
-
-	^ board at: column , file ifAbsent: [ ^ nil ]
+	
+	"Si la case n'existe pas on renvoie MyNilSquare"
+	^ board at: column , file ifAbsent: [ MyNilSquare new ]
 ]
 
 { #category : 'accessing' }
@@ -91,12 +92,8 @@ MyChessSquare >> contents: aPiece [
 	| text |
 	contents := aPiece.
 
-	text := contents
-		        ifNil: [
-			        color isBlack
-				        ifFalse: [ 'z' ]
-				        ifTrue: [ 'x' ] ]
-		        ifNotNil: [ contents renderPieceOn: self ].
+	text := contents renderPieceOn: self.
+	
 	piece text: (text asRopedText
 			 fontSize: 48;
 			 foreground: self foreground;
@@ -111,8 +108,8 @@ MyChessSquare >> down [
 
 { #category : 'asd' }
 MyChessSquare >> emptyContents [
-	
-	self contents: nil
+	"Vide la case, on la remplace avec une NilPiece"
+	self contents: MyNilPiece new.
 ]
 
 { #category : 'accessing' }
@@ -132,7 +129,7 @@ MyChessSquare >> foreground [
 { #category : 'testing' }
 MyChessSquare >> hasPiece [
 	
-	^ contents isNil not
+	^ contents isPiece
 ]
 
 { #category : 'highlighting' }
@@ -166,8 +163,10 @@ MyChessSquare >> initialize [
 	self
 		background: Color white;
 		geometry: BlSquareGeometry new.
-
-	self addEventHandlerOn: BlClickEvent do: [ :e | self click ]
+		
+	self addEventHandlerOn: BlClickEvent do: [ :e | self click ].
+	"Chaque square a au moins une NilPiece pour éviter nil"
+	contents := MyNilPiece new.
 ]
 
 { #category : 'accessing' }
@@ -185,7 +184,7 @@ MyChessSquare >> name [
 MyChessSquare >> name: aString [
 
 	name := aString.
-	label text: (name asRopedText foreground: color negated)
+	label text: (name asRopedText foreground: color asColor negated)
 ]
 
 { #category : 'printing' }
@@ -200,85 +199,45 @@ MyChessSquare >> printOn: aStream [
 
 { #category : 'rendering' }
 MyChessSquare >> renderBishop: aPiece [
-
-	^ aPiece isWhite
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'B' ]
-				  ifTrue: [ 'b' ] ]
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'V' ]
-				  ifTrue: [ 'v' ] ]
+	"acording to the color of the square, render the bishop"
+	^ self color renderBishopOnSquare: aPiece
 ]
 
 { #category : 'rendering' }
 MyChessSquare >> renderKing: aPiece [
-
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'L' ]
-				  ifTrue: [ 'l' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'K' ]
-				  ifTrue: [ 'k' ] ]
+	"according to the color of the square, render the king"
+	^ self color renderKingOnSquare: aPiece
 ]
 
 { #category : 'rendering' }
 MyChessSquare >> renderKnight: aPiece [
-
-	^ aPiece isWhite
-		  ifFalse: [ color isBlack
-				  ifFalse: [ 'M' ]
-				  ifTrue: [ 'm' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'N' ]
-				  ifTrue: [ 'n' ] ]
+	"according to the color of the square, render the knight"
+	^ self color renderKnightOnSquare: aPiece
 ]
 
 { #category : 'rendering' }
 MyChessSquare >> renderPawn: aPiece [
 
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'O' ]
-				  ifTrue: [ 'o' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'P' ]
-				  ifTrue: [ 'p' ] ]
+	^ self color renderPawnOnSquare: aPiece
+]
+
+{ #category : 'rendering' }
+MyChessSquare >> renderPiece: aPiece [
+
+	^ aPiece renderPieceOn: self
 ]
 
 { #category : 'rendering' }
 MyChessSquare >> renderQueen: aPiece [
+	"according to the color of the square, render the queen"
+	^ self color renderQueenOnSquare: aPiece
 
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'W' ]
-				  ifTrue: [ 'w' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'Q' ]
-				  ifTrue: [ 'q' ] ]
 ]
 
 { #category : 'rendering' }
 MyChessSquare >> renderRook: aPiece [
-
-	^ aPiece isWhite
-		  ifFalse: [
-			  color isBlack
-				  ifFalse: [ 'T' ]
-				  ifTrue: [ 't' ] ]
-		  ifTrue: [
-			  color isBlack
-				  ifFalse: [ 'R' ]
-				  ifTrue: [ 'r' ] ]
+	"according to the color of the square, render the rook"
+	^ self color renderRookOnSquare: aPiece
 ]
 
 { #category : 'accessing' }
@@ -291,6 +250,11 @@ MyChessSquare >> right [
 MyChessSquare >> select [
 	
 	self border: Color green
+]
+
+{ #category : 'asserting' }
+MyChessSquare >> shouldStopCollecting [
+	^ false
 ]
 
 { #category : 'highlighting' }

@@ -7,7 +7,7 @@ Class {
 
 { #category : 'as yet unclassified' }
 MyKing >> attackingSquares [
-
+	"return all the squares where the king can find opponents"
 	^ self basicTargetSquares
 ]
 
@@ -35,12 +35,13 @@ MyKing >> id [
 
 { #category : 'testing' }
 MyKing >> isCheckMated [
-	"We check if the opponent pieces target all my potential movements and myself"
-
+	"We check if the opponent pieces target all my potential movements and myself
+	 opponentPieces : all the opponents on the board"
 	| threatenedSquares |
 	threatenedSquares := self opponentPieces flatCollect: [ :e |
 		                     e attackingSquares ].
-
+							 
+	"the king is mat if legalTargetSquares is empty (has no squares to go to) and his square is threatened"
 	^ self legalTargetSquares isEmpty and: [
 		  threatenedSquares includes: self square ]
 ]
@@ -64,9 +65,19 @@ MyKing >> isKing [
 
 { #category : 'accessing' }
 MyKing >> opponentPieces [
-
+	"return all the opponent pieces on the board"
 	^ self board pieces select: [ :e |
 		  e notNil and: [ e color = color negated ] ]
+]
+
+{ #category : 'rendering' }
+MyKing >> renderKingOnBlackSquare [
+	^ color renderKingOnBlackSquare: self
+]
+
+{ #category : 'rendering' }
+MyKing >> renderKingOnWhiteSquare [
+	^ color renderKingOnWhiteSquare: self
 ]
 
 { #category : 'rendering' }
@@ -77,14 +88,17 @@ MyKing >> renderPieceOn: aSquare [
 
 { #category : 'rendering' }
 MyKing >> targetSquaresLegal: aBoolean [
-	"The king cannot move to threatened squares"
+	"The king cannot move to threatened squares
+	 filter the threatened squares
+	 return the squares where the king can move without being in check : threatened squared, busy squares, square where there is an unprotected opponent"
 
 	| threatenedSquares |
 	threatenedSquares := self opponentPieces flatCollect: [ :e |
 		                     e attackingSquares ].
 
 	^ self basicTargetSquares select: [ :s |
-		  s notNil and: [
+			"shouldStopCollecting pour éviter d'avoir un nilSquare"
+		  (s shouldStopCollecting not) and: [
 			  (threatenedSquares includes: s) not and: [
 				  s hasPiece not or: [ 
 					"The square has an opponent piece"
