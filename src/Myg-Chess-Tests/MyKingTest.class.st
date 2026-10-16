@@ -30,3 +30,12 @@ MyKingTest >> testIsNotCheckBySameColorRook [
 
 	self deny: king isInCheck
 ]
+
+{ #category : 'tests' }
+MyKingTest >> testRenderWhiteKnightOnWhiteSquare [
+
+    | square |
+    square := MyChessSquare white.
+
+    self assert: (square renderKnight: MyKnight white) equals: $N
+]
